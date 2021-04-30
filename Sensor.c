@@ -140,7 +140,7 @@ void SensorDataProcess::load_sensor_setting()
         }
         else if(state == 1)
         {
-            if(count <= 3)
+            if(count <= 1)
             {
                 sensor_setting_[count] = *(uint32_t *)init.p2h_sensor_setting_addr;
                 count++;
@@ -164,12 +164,12 @@ void SensorDataProcess::update_sensor_setting()
     if(update_sensor_setting_flag_)
     {
         int count = 0;
-        int tmp_angle = 0;
+        short int tmp_angle = 0;
 
         tmp_angle = (sensor_setting_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            imu_desire_[0] = (double)(((tmp_angle & 0x7FFF) * (-1)) / 100.0);
+            imu_desire_[0] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
         }
         else
         {
@@ -179,7 +179,7 @@ void SensorDataProcess::update_sensor_setting()
         tmp_angle = sensor_setting_[count++] & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            imu_desire_[1] = (double)(((tmp_angle & 0x7FFF) * (-1)) / 100.0);
+            imu_desire_[1] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
         }
         else
         {
@@ -189,7 +189,7 @@ void SensorDataProcess::update_sensor_setting()
         tmp_angle = (sensor_setting_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            imu_desire_[2] = (double)(((tmp_angle & 0x7FFF) * (-1)) / 100.0);
+            imu_desire_[2] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
         }
         else
         {
@@ -199,54 +199,9 @@ void SensorDataProcess::update_sensor_setting()
         sensor_request_ = (sensor_setting_[count] >> 8) & 0x01;
         imu_offset_reset_ = (sensor_setting_[count] >> 8) & 0x02;
         force_state_ = (sensor_setting_[count] >> 8) & 0x04;
-        gain_set_state_ = (sensor_setting_[count] >> 8) & 0x08;        
+      
         
         get_sensor_setting_flag_ = true;
-
-        count++;
-
-        int tmp_gain;
-
-        tmp_gain = (sensor_setting_[count]>>16)&0xFFFF;  //count = 2
-        if(tmp_angle & 0x8000)
-        {
-            PD_Balance_Roll_Gain_ = (double)((~tmp_gain + 1) & 0x7FFF) / 10000;
-        }
-        else
-        {
-            PD_Balance_Roll_Gain_ = (double)(tmp_gain & 0x7FFF) / 10000;            
-        }
-
-        tmp_gain = (sensor_setting_[count++])&0xFFFF;  //count = 2
-        if(tmp_angle & 0x8000)
-        {
-            PD_Balance_Pitch_Gain_ = (double)((~tmp_gain + 1) & 0x7FFF) / 10000;
-        }
-        else
-        {
-            PD_Balance_Pitch_Gain_ = (double)(tmp_gain & 0x7FFF) / 10000;            
-        }        
-
-        tmp_gain = (sensor_setting_[count]>>16)&0xFFFF;  //count = 3
-        if(tmp_angle & 0x8000)
-        {
-            PD_Balance_Kp_ = (double)((~tmp_gain + 1) & 0x7FFF) / 100;
-        }
-        else
-        {
-            PD_Balance_Kp_ = (double)(tmp_gain & 0x7FFF) / 100;            
-        }
-
-        tmp_gain = (sensor_setting_[count])&0xFFFF;  //count = 3
-        if(tmp_angle & 0x8000)
-        {
-            PD_Balance_Kd_ = (double)((~tmp_gain + 1) & 0x7FFF) / 10000;
-        }
-        else
-        {
-            PD_Balance_Kd_ = (double)(tmp_gain & 0x7FFF) / 10000;            
-        }         
-
         if(imu_offset_reset_)
         {
             for(count=0; count<3; count++)
@@ -302,7 +257,7 @@ void SensorDataProcess::update_imu()
     if(update_imu_flag_)
     {
         int count = 0;
-        int tmp_angle = 0;
+        short int tmp_angle = 0;
 
         if(imu_[0] == imu_[1])
             return;
@@ -310,7 +265,7 @@ void SensorDataProcess::update_imu()
         tmp_angle = (imu_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[0] = (double)(((tmp_angle & 0x7FFF) * (-1)) / 100.0);
+            rpy_raw_[0] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
         }
         else
         {
@@ -320,7 +275,7 @@ void SensorDataProcess::update_imu()
         tmp_angle = imu_[count++] & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[1] = (double)(((tmp_angle & 0x7FFF) * (-1)) / 100.0);
+            rpy_raw_[1] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
         }
         else
         {
@@ -330,7 +285,7 @@ void SensorDataProcess::update_imu()
         tmp_angle = (imu_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[2] = (double)(((tmp_angle & 0x7FFF) * (-1)) / 100.0);
+            rpy_raw_[2] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
         }
         else
         {
@@ -440,7 +395,8 @@ void SensorDataProcess::update_press_left()
         tmp_press = (press_receive_data_left[count] >> 16) & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_left_raw_[0] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            // press_left_raw_[0] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_left_raw_[0] = (int)(0);
         }
         else
         {
@@ -450,7 +406,7 @@ void SensorDataProcess::update_press_left()
         tmp_press = press_receive_data_left[count++] & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_left_raw_[1] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_left_raw_[1] = (int)(0);
         }
         else
         {
@@ -460,7 +416,7 @@ void SensorDataProcess::update_press_left()
         tmp_press = (press_receive_data_left[count] >> 16) & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_left_raw_[2] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_left_raw_[2] = (int)(0);
         }
         else
         {
@@ -470,7 +426,7 @@ void SensorDataProcess::update_press_left()
         tmp_press = press_receive_data_left[count] & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_left_raw_[3] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_left_raw_[3] = (int)(0);
         }
         else
         {
@@ -496,7 +452,7 @@ void SensorDataProcess::update_press_right()
         tmp_press = (press_receive_data_right[count] >> 16) & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_right_raw_[0] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_right_raw_[0] = (int)(0);
         }
         else
         {
@@ -506,7 +462,7 @@ void SensorDataProcess::update_press_right()
         tmp_press = press_receive_data_right[count++] & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_right_raw_[1] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_right_raw_[1] = (int)(0);
         }
         else
         {
@@ -516,7 +472,7 @@ void SensorDataProcess::update_press_right()
         tmp_press = (press_receive_data_right[count] >> 16) & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_right_raw_[2] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_right_raw_[2] = (int)(0);
         }
         else
         {
@@ -526,7 +482,7 @@ void SensorDataProcess::update_press_right()
         tmp_press = press_receive_data_right[count] & 0xFFFF;
         if(tmp_press & 0x8000)
         {
-            press_right_raw_[3] = (int)(((tmp_press & 0x7FFF) * (-1)) );
+            press_right_raw_[3] = (int)(0);
         }
         else
         {

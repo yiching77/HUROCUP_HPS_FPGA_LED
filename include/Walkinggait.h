@@ -17,6 +17,7 @@
 #include "Initial.h"
 #include "WalkingCycle.h"
 #include "WalkingTrajectory.h"
+#include "KickingGait.h"
 // #include <std_msgs/String.h>
 
 #define WALKING_INTERVAL 30000.0   //30 ms
@@ -28,7 +29,70 @@ typedef enum
     etChangeValue = 0x04
 }etWalkingCmd;
 
-class Walkinggait
+typedef enum
+{
+    Single = 0,
+    Continuous,
+    LC_up,
+    LC_down,
+    Long_Jump,
+    RKickB = 9,
+    LKickB
+    
+}etWalkingStatus;
+
+class WalkingGaitByLIPM
+{
+public:
+    WalkingGaitByLIPM();
+    ~WalkingGaitByLIPM();
+
+    void initialize();
+    void resetParameter();
+    void process();
+
+    double wComVelocityInit(double x0, double xt, double px, double t, double T);
+    double wComPosition(double x0, double vx0, double px, double t, double T);
+    double wFootPosition(const double start, const double length, const double t, const double T, const double T_DSP);
+    double wFootPositionRepeat(const double start, const double length, const double t, const double T, const double T_DSP);
+    double wFootPositionZ(const double height, const double t, const double T, const double T_DSP);
+    double wFootTheta(const double theta, bool reverse, const double t, const double T, const double T_DSP);
+
+    double unit_step(double x);
+    double sinh(double x);
+    double cosh(double x);
+
+    //for test
+    string DtoS(double value);
+    void saveData();
+
+// private:
+    bool is_parameter_load_;
+    bool ready_to_stop_;
+    int moving_state_;
+    int period_t_;
+    int time_point_, sample_point_, sample_time_;
+    int now_step_, pre_step_;
+    int g_;
+    int step_, left_step_, right_step_;
+    double TT_, t_;
+    double Tc_;
+    double step_length_, width_size_, lift_height_, now_length_, now_width_;
+    double theta_, abs_theta_, last_theta_;
+    double last_step_length_, now_left_length_, now_right_length_, last_length_;
+    double shift_length_, last_shift_length_, now_shift_, now_left_shift_, now_right_shift_, last_shift_;
+    double step_point_lx_, step_point_rx_, step_point_ly_, step_point_ry_;
+    double step_point_lz_, step_point_rz_, step_point_lthta_, step_point_rthta_;
+    double vx0_, vy0_, px_, py_, pz_;
+    double lpx_, rpx_, lpy_, rpy_, lpz_, rpz_, lpt_, rpt_;
+    // double T_DSP_;
+    bool plot_once_, if_finish_;
+    
+    int name_cont_;
+	std::map<std::string, std::vector<float>> map_walk;
+};
+
+class Walkinggait : public WalkingGaitByLIPM
 {
 public:
     Walkinggait();
@@ -49,7 +113,9 @@ public:
     bool get_parameter_flag_;
     bool get_walkdata_flag_;
     bool locus_flag_;
+    bool LIPM_flag_;
     int motion_delay_;
+    int pre_walking_mode;
 
 private:
     bool update_parameter_flag_;
@@ -57,44 +123,6 @@ private:
     bool continuous_stop_flag_;
     int parameter_[6];
     int walkdata_[3];
-};
-
-class WalkinggaitByLIPM
-{
-public:
-    WalkinggaitByLIPM();
-    ~WalkinggaitByLIPM();
-
-    void process();
-
-    double wosc_move_x(double lock_range, double period_t, double step_x, int time_t);
-    double wosc_move_y(double lock_range, double period_t, double step_y, int time_t);
-    double wosc_move_z(double lock_range, double period_t, double step_z, double rho_z, int time_t);
-
-    double wLIPM_com_vx0(double x0, double xt, double px, double z, double t, double T, double C, double q);
-    double wLIPM_com_x1(double l1, double k1, double t, double Tc);
-    double wLIPM_com_x2(double l2, double l1, double k2, double k1, double t, double Tc, double t1);
-    double wLIPM_com_x3(double l3, double l2, double k3, double k2, double t, double Tc, double t2);
-    double dsp_x_velocity_0(double x0, double xt, double t, double Tc, double x1t, double x2t, double x3t);
-    double dsp_x_velocity_1(double l1, double k1, double t, double Tc);
-    double dsp_x_velocity_2(double l2, double l1, double k2, double k1, double t, double Tc, double t1);
-    double dsp_x_velocity_3(double l3, double l2, double k3, double k2, double t, double Tc, double t2);
-    double wLIPM_com_px(double x0, double dx0, double px, double z, double t, double T, double C, double q);
-    double wLIPM_com_vx(double x0, double dx0, double px, double z, double t, double T, double C, double q);
-    double wLIPM_com_vy0(double y0, double py, double z, double t, double T);
-    double wLIPM_com_py(double y0, double dy0, double py, double z, double t, double T);
-    double wLIPM_com_vy(double y0, double dy0, double py, double z, double t, double T);
-    double wLIPM_foot_px_init(const double wlength, const double t, const double T, const double t_dsp, const int now_step);
-    double wLIPM_foot_px_fin(const double wlength, const double t, const double T, const double t_dsp, const int now_step);
-    double wLIPM_foot_px_repeat(const double wlength, const double t, const double T, const double t_dsp, const int now_step);
-    double wLIPM_foot_pz(const double wheight, const double t, const double T, const double t_dsp);
-    double wLIPM_com_pz(const double com_rho_z, const double t, const double T, const double t_dsp, const int now_step);
-
-    double sinh(double x);
-    double cosh(double x);
-
-private:
-
 };
 
 #endif /* WALKINGGAIT_H_ */

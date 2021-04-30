@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <fstream>
 #include <vector>
+#include <map>
 #include <Eigen/Eigen>
 #include "Inverse_kinematic.h"
 #include "Fuzzy_Controller.h"
@@ -14,6 +15,9 @@
 #include "Sensor.h"
 #include "kalman.h"
 #include "math.h"
+#include "DefineDataStruct.h"
+#include "ZMPProcess.h"
+class ZMPProcess;
 
 using namespace std;
 
@@ -22,6 +26,7 @@ using namespace std;
 #define Angle_2_PI          PI/180
 #define PI_2_Angle          180/PI
 #define DEGREE2RADIAN		(M_PI / 180.0)
+#define RADIAN2DEGREE		(180.0/ M_PI)
 
 /*******************Function Define******************************/
 #define Auto_Gyro_offset
@@ -69,6 +74,106 @@ using namespace std;
 #define RPY_STAND_RANGE 	0.52	//30 degree
 /////////////////////////////////////////////////////////
 
+enum class imu {roll = 0,pitch,yaw};
+typedef enum {leftfoot = 0,rightfoot,doublefeet} etSupFoot;
+
+
+class ButterWorthParam
+{
+public:
+    static ButterWorthParam set(float a1, float a2, float b1, float b2);
+    float a_[2];
+    float b_[2];
+};
+
+class ButterWorthFilter
+{
+public:
+    ButterWorthFilter();
+    ~ButterWorthFilter();
+    void initialize(ButterWorthParam param);
+    float getValue(float present_value);
+private:
+    ButterWorthParam param_;
+    float prev_output_;
+    float prev_value_;
+};
+
+
+class PID_Controller
+{
+public:
+    PID_Controller(float Kp, float Ki, float Kd);
+    PID_Controller();
+    ~PID_Controller();
+    void initParam();
+    void setKpid(double Kp, double Ki, double Kd);
+    void setControlGoal(float x1c = 0, float x2c = 0, float x3c = 0);
+    void setValueLimit(float upper_limit, float lower_limit);
+    // void setDataValue(float value);
+    float calculateExpValue(float value);
+    float getError();
+    float getErrors();
+    float getErrord();
+    // void setErrorValue(float error);
+    // void setErrorsValue(float errors);
+    // void setErrordValue(float errord);
+    // float getFixValue();
+private:
+    double Kp;
+    double Ki;
+    double Kd;
+    float error;
+    float pre_error;
+    float errors;
+    float errord;
+    float x1c;
+    float x2c;
+    float x3c;
+    float exp_value;
+    float value;
+    float pre_value;
+    float upper_limit;
+    float lower_limit;
+};
+
+typedef struct IMUParameter IMUParam;
+struct IMUParameter
+{
+    float pos;
+    float vel;
+    void initialize()
+    {
+        pos = 0;
+        vel = 0;
+    }
+    // float acc;
+};
+
+typedef struct BalanceParameter BalanceParam;
+struct BalanceParameter
+{
+    float control_value_total;
+    float control_value_once;
+    void initialize()
+    {
+        control_value_total = 0;
+        control_value_once = 0;
+    }
+};
+
+typedef struct ButterWorthIMUParameter ButterWorthIMUParam;
+struct ButterWorthIMUParameter
+{
+    ButterWorthFilter pos;
+    ButterWorthFilter vel;
+    void initialize()
+    {
+        pos.initialize(ButterWorthParam::set(1, -0.676819, 0.161590, 0.161590)); //fs = 33 , fc = 2, n = 1;
+        vel.initialize(ButterWorthParam::set(1, -0.676819, 0.161590, 0.161590)); //fs = 33 , fc = 2, n = 1;
+    }
+};
+
 class BalancePDController
 {
 public:
@@ -78,7 +183,6 @@ public:
 	void set_desired(double desired);
 	void set_control_cycle_time(double control_cycle_sec);
 	double get_feedback(double present_sensor_output);
-	void p2h_get_PD_gain();
 
 	double desired_;
 	double p_gain_;
@@ -208,8 +312,13 @@ public:
 	void get_sensor_value();
 	void balance_control();
 	void control_after_ik_calculation();
-	double pid_control(double error, double error_integral, double error_dot, double Kp, double Ki, double Kd);
-	void p2h_get_gain();
+
+
+	// LIPM
+	void setSupportFoot();
+	void resetControlValue();
+	void endPointControl();
+	float calculateCOMPosbyLIPM(float pos_adj, float vel);
 
 	double control_cycle_sec_;
 	double foot_roll_adj_by_imu_roll_;
@@ -267,87 +376,95 @@ public:
 	double original_ik_point_rz_, original_ik_point_lz_;
 	double ankle_pitch_;
 
-	double roll_gain_;
-	double pitch_gain_;
+	//LIPM
+	etSupFoot sup_foot_, pre_sup_foot_;
+
+	IMUParam init_imu_value[3];
+    IMUParam pres_imu_value[3];
+    IMUParam prev_imu_value[3];
+    IMUParam ideal_imu_value[3];
+    IMUParam passfilter_pres_imu_value[3];
+    IMUParam passfilter_prev_imu_value[3];
+
+	ButterWorthIMUParam butterfilter_imu[3];
+
+	BalanceParam leftfoot_hip_roll_value;
+    BalanceParam leftfoot_hip_pitch_value;
+	BalanceParam rightfoot_hip_roll_value;
+	BalanceParam rightfoot_hip_pitch_value;
+	PID_Controller PIDleftfoot_hip_roll;
+    PID_Controller PIDleftfoot_hip_pitch;
+	PID_Controller PIDrightfoot_hip_roll;
+    PID_Controller PIDrightfoot_hip_pitch;
+    
+	BalanceParam leftfoot_EPx_value;	//EP = End point
+	BalanceParam leftfoot_EPy_value;
+	BalanceParam rightfoot_EPx_value;
+	BalanceParam rightfoot_EPy_value;
+	PID_Controller PIDleftfoot_zmp_x;
+	PID_Controller PIDleftfoot_zmp_y;
+	PID_Controller PIDrightfoot_zmp_x;
+	PID_Controller PIDrightfoot_zmp_y;
+
+	BalanceParam CoM_EPx_value;
+	PID_Controller PIDCoM_x;
+
+	ZMPParam pres_ZMP;
+    ZMPParam prev_ZMP;
+    ZMPParam ideal_ZMP;
+
+	ZMPProcess *ZMP_process;
+
+	// float supfoot_hip_roll;
+    // float supfoot_hip_pitch;
+    // float supfoot_ankle_roll;
+    // float supfoot_ankle_pitch;
+	// float swingfoot_hip_roll;
+    // float swingfoot_hip_pitch;
+    // float swingfoot_ankle_roll;
+    // float swingfoot_ankle_pitch;
+	float leftfoot_hip_roll;
+    float leftfoot_hip_pitch;
+    float leftfoot_ankle_roll;
+    float leftfoot_ankle_pitch;
+	float rightfoot_hip_roll;
+    float rightfoot_hip_pitch;
+    float rightfoot_ankle_roll;
+    float rightfoot_ankle_pitch;
+	float pre_leftfoot_hip_roll;
+	float pre_rightfoot_hip_roll;
+	int qq, ww;
 
 	// for debug
 	int now_step_, last_step_;
-	void SaveData();
+	void saveData();
     string DtoS(double value);
-	vector<double> fb_x_r;
-	vector<double> fb_x_l;
-	vector<double> fb_y_r;
-	vector<double> fb_y_l;
-	vector<double> fb_z_r;
-	vector<double> fb_z_l;
+	vector<double> vec_roll, vec_pitch;
+	vector<float> left_control_value_once, left_control_value_total;
+	vector<float> right_control_value_once, right_control_value_total;
+	vector<float> lf_hr;	//leftfoot hip roll
+	vector<float> lf_hp;
+	vector<float> lf_ar;	//leftfoot ankle roll
+	vector<float> lf_ap;
+	vector<float> rf_hr;	//rightfoot hip roll
+	vector<float> rf_hp;
+	vector<float> rf_ar;	//rightfoot ankle roll
+	vector<float> rf_ap;
 	vector<double> fb_cog_x;
 	vector<double> fb_cog_y;
+	vector<double> fb_roll;
+	vector<double> fb_pitch;
+	std::map<std::string, float> map_param;
+    std::map<std::string, std::vector<float>> map_roll;
+    std::map<std::string, std::vector<float>> map_pitch;
+	std::map<std::string, std::vector<float>> map_ZMP;
+	std::map<std::string, std::vector<float>> map_CoM;
+
+	int name_cont_;
+	//LIPM end
 };
 
-class ZeroMomentPoint
-{
-public:
-	ZeroMomentPoint();
-	~ZeroMomentPoint();
 
-	void zmp_offset_reset();
-	void zmp_filter();
-	void SaveDataL();
-	void SaveDataR();
-	void SaveDataLR();
-	void VectorSave();
-
-
-    string DtoS(double value);
-
-	bool	Zmp_offset_reset_flag_;
-	bool	Zmp_offset_load_flag_;
-	short	Zmp_offset_count_;
-	//int 	Zmp_kg_offset_[8][5];
-	int 	Zmp_kg_offset_load_[8][5];
-
-	// int 	**Zmp_kg_offset_default_ ;	 // for reset weifan
-
-	double 	ZMP_S_L_[4];
-	double 	ZMP_S_R_[4];		
-	double ZMP_L_X_ , ZMP_L_Y_ , ZMP_R_X_ , ZMP_R_Y_ , ZMP_X_ , ZMP_Y_ ;	
-	double sensor_digital_, sensor_digital_left_, sensor_digital_right_;
-	//left	vector
-	vector<double>	press_left_0;
-	vector<double>	press_left_1;
-	vector<double>	press_left_2;
-	vector<double>	press_left_3;
-
-	vector<double> fp_ZMP_S_L_0;
-	vector<double> fp_ZMP_S_L_1;
-	vector<double> fp_ZMP_S_L_2;
-	vector<double> fp_ZMP_S_L_3;
-
-	vector<double> fp_digital_L;
-	vector<double> fp_ZMP_L_X;
-	vector<double> fp_ZMP_L_Y;	
-	//right	vector
-	vector<double>	press_right_0;
-	vector<double>	press_right_1;
-	vector<double>	press_right_2;
-	vector<double>	press_right_3;
-
-	vector<double> fp_ZMP_S_R_0;
-	vector<double> fp_ZMP_S_R_1;
-	vector<double> fp_ZMP_S_R_2;
-	vector<double> fp_ZMP_S_R_3;
-
-	vector<double> fp_digital_R;
-	vector<double> fp_ZMP_R_X;
-	vector<double> fp_ZMP_R_Y;	
-	//feet vector
-	vector<double> fp_digital;
-	vector<double> fp_ZMP_Y;
-	vector<double> fp_ZMP_X;
-
-private:
-
-};
 
 class LinearAlgebra
 {
