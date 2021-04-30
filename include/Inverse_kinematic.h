@@ -5,6 +5,12 @@
 #include <math.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#include <fstream>
+#include <vector>
+#include <map>
+#include <iostream>
+
 #include "alt_types.h"
 #include "hps_0.h"
 /********************************************************/
@@ -47,7 +53,7 @@
 #define SPEED_TRANS 32.0303030303030303030303030303 // (32767 / 1023)
 //#define Debug_IK
 /********************************************************/
-#define COM_HEIGHT 24.3
+#define COM_HEIGHT 24.3//24.3
 //#define Length_Pelvis 18.5
 //#define Length_Leg 30
 #define STAND_OFFSET_RX 0//-2.8
@@ -191,7 +197,10 @@ public:
     void initial_points();
     void initial_parameters();
     void initial_points_process();
-    void calculate_inverse_kinematic(int );
+    void calculate_inverse_kinematic(int Motion_Delay);
+    std::string DtoS(double value);
+	std::map<std::string, std::vector<double>> map_motor;       
+    void saveData();
     unsigned short update_crc(unsigned short , unsigned char *, unsigned short);
 
     unsigned char packet_char_[203];
@@ -209,6 +218,9 @@ private:
     unsigned int output_angle_[21];
     double rotate_body_l_;
     bool flag_;
+    int name_cont_;
+    bool old_walking_stop;
+ 
 };
 
 #endif /*INVERSE_KINEMATIC_H_*/

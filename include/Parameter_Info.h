@@ -50,6 +50,17 @@ public:
     double X_Swing_COM;
     double BASE_LIFT_Z;
 
+//for kick
+    double Kick_Point_X;
+    double Kick_Point_Y;
+    double Kick_Point_Z;
+    double Back_Point_X;
+    double Back_Point_Z;
+
+    double Support_Foot_Hip_Upper_Pitch;
+    double Support_Foot_Ankle_Upper_Pitch;
+    double Kick_Foot_Ankle_Upper_Pitch;
+    
 // clock_t system_start;
 // clock_t system_end;
 };

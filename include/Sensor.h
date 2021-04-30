@@ -41,13 +41,7 @@ public:
     int press_right_[4];
     int press_left_[4];
 
-    //set balance gain
-    bool gain_set_state_;
-    bool Balance_Para_Enable_;
-    double PD_Balance_Roll_Gain_;
-    double PD_Balance_Pitch_Gain_;
-    double PD_Balance_Kp_;
-    double PD_Balance_Kd_;
+
 private:
     int rpy_from_fpga_[3];
     double rpy_raw_[3];
@@ -58,7 +52,7 @@ private:
     bool get_sensor_setting_flag_;
     bool update_imu_flag_;
     bool get_imu_flag_;
-    unsigned int sensor_setting_[4];
+    unsigned int sensor_setting_[2];
     unsigned int imu_[2];
 
     bool sensor_request_;

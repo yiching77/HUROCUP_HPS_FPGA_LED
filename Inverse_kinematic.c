@@ -9,6 +9,7 @@ struct Status_Struct RobotStatus;
 extern Initial init;
 extern Datamodule datamodule;
 extern BalanceControl balance;
+extern kickgait_space::KickingGait kickinggait;
 
 Locus::Locus()
 {
@@ -150,6 +151,17 @@ InverseKinematic::InverseKinematic()
 {
 	rotate_body_l_ = 0.0;
 	flag_ = false;
+
+	name_cont_ = 0;
+	old_walking_stop = true;
+	std::vector<double> temp;
+	// if(map_motor.empty())
+	// {
+		map_motor["motor_11"] = temp;
+        map_motor["motor_15"] = temp;
+        map_motor["motor_17"] = temp;
+        map_motor["motor_21"] = temp;
+	// }
 }
 
 InverseKinematic::~InverseKinematic()
@@ -173,18 +185,18 @@ void InverseKinematic::initial_angle_gain()
 	angle_gain_[8] = ALL_Angle_Gain * 1;
 
 	angle_gain_[9] = ALL_Angle_Gain * 1;
-	angle_gain_[10] = ALL_Angle_Gain * 1.2;
+	angle_gain_[10] = ALL_Angle_Gain * 1;
 	angle_gain_[11] = ALL_Angle_Gain * 1;
 	angle_gain_[12] = ALL_Angle_Gain * 1;
 	angle_gain_[13] = ALL_Angle_Gain * 1;
-	angle_gain_[14] = ALL_Angle_Gain * 1.2;
+	angle_gain_[14] = ALL_Angle_Gain * 1;
 
 	angle_gain_[15] = ALL_Angle_Gain * 1;
-	angle_gain_[16] = ALL_Angle_Gain * 1.2;
+	angle_gain_[16] = ALL_Angle_Gain * 1;
 	angle_gain_[17] = ALL_Angle_Gain * 1;
 	angle_gain_[18] = ALL_Angle_Gain * 1;
 	angle_gain_[19] = ALL_Angle_Gain * 1;
-	angle_gain_[20] = ALL_Angle_Gain * 1.2;
+	angle_gain_[20] = ALL_Angle_Gain * 1;
 }
 
 void InverseKinematic::initial_speed_gain()
@@ -262,6 +274,8 @@ void InverseKinematic::initial_inverse_kinematic()
 	output_base_[10] += 0;
 	output_base_[16] -= 0;
 	Parameters.Body_Pitch_tmp = Parameters.Body_Pitch;
+
+
 }
 
 void InverseKinematic::initial_parameters(){
@@ -483,13 +497,35 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
     else
         Points.Thta[20] = PI - Points.Thta[16]-rotate_body_l_;
 
+// be
+	map_motor.find("motor_11")->second.push_back(Points.Thta[10] * PI_TO_OUTPUT);
+	map_motor.find("motor_15")->second.push_back(Points.Thta[14] * PI_TO_OUTPUT);
+	map_motor.find("motor_17")->second.push_back(Points.Thta[16] * PI_TO_OUTPUT);
+	map_motor.find("motor_21")->second.push_back(Points.Thta[20] * PI_TO_OUTPUT);
+
+	if(old_walking_stop == false && parameterinfo->complan.walking_stop == true)
+	{
+		saveData();
+	}
+	old_walking_stop = parameterinfo->complan.walking_stop;
+
+// end
 	balance.control_after_ik_calculation();
+
+	if(kickinggait.kicking_process_flag_)
+	{
+		kickinggait.hipPostureControl();
+		kickinggait.ankleBalanceControl();
+		kickinggait.hipPitchControl();
+	}
 
     for( i = 0; i < 21; i++)
     {
 		// if(i==12)
 		// 	printf("thta 13 = %f, ag 13 = %f\t", Points.Thta[i], angle_gain_[i]);
-		Points.Thta[i] = Points.Thta[i] * angle_gain_[i];
+		
+		// Points.Thta[i] = Points.Thta[i] * angle_gain_[i];
+		
 		// if(i==12)
 		// 	printf("thta 13 = %f, ag 13 = %f\n", Points.Thta[i], angle_gain_[i]);
         if(Points.P_Table[i])
@@ -649,6 +685,92 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
 
 	*((uint32_t *)init.robot_motion_addr+(44)) = (lh_crc_value << 16) + rh_crc_value;
 	*((uint32_t *)init.robot_motion_addr+(45)) = (lf_crc_value << 16) + rf_crc_value;
+
+	// printf("%d",output_angle_[10]);
+
+	
+}
+
+string InverseKinematic::DtoS(double value)
+{
+    string str;
+    std::stringstream buf;
+    buf << value;
+    str = buf.str();
+    return str;
+}
+
+void InverseKinematic::saveData()
+{
+    char path[200] = "/data";
+	std::string tmp = std::to_string(name_cont_);
+	tmp = "/IK_motor"+tmp+".csv";
+    strcat(path, tmp.c_str());
+
+	
+    fstream fp;
+    fp.open(path, std::ios::out);
+	std::string savedText;
+    std::map<std::string, std::vector<double>>::iterator it_motor;
+
+	for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+	{
+		savedText += it_motor->first;
+		if(it_motor == --map_motor.end())
+		{
+			savedText += "\n";
+			fp<<savedText;
+			savedText = "";
+		}
+		else
+		{
+			savedText += ",";
+		}		
+	}
+	it_motor = map_motor.begin();
+	int max_size = it_motor->second.size();
+
+	for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+	{
+		if(max_size < it_motor->second.size())
+            max_size = it_motor->second.size();
+	}
+	for(int i = 0; i < max_size; i++)
+    {
+        for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+        {
+            if(i < it_motor->second.size())
+            {
+                if(it_motor == --map_motor.end())
+                {
+                    savedText += std::to_string(it_motor->second[i]) + "\n";
+                    fp<<savedText;
+                    savedText = "";
+                }
+                else
+                {
+                    savedText += std::to_string(it_motor->second[i]) + ",";
+                }
+            }
+            else
+            {
+                if(it_motor == --map_motor.end())
+                {
+                    savedText += "none\n";
+                    fp<<savedText;
+                    savedText = "";
+                }
+                else
+                    savedText += "none,";
+            }
+        }
+    }
+    fp.close();
+    for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+        it_motor->second.clear();
+
+    name_cont_++;
+
 }
 
 unsigned short InverseKinematic::update_crc(unsigned short crc_accum, unsigned char *data_blk_ptr, unsigned short data_blk_size)

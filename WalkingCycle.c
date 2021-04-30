@@ -438,7 +438,6 @@ void WalkingCycle::continuouswalkingprocess()
                 parameterinfo->IsParametersLoad = false;
                 //parameterinfo->WalkFlag = false;
                 parameterinfo->FpgaFlag = false;
-                //printf("walking_stop = false");
                 parameterinfo->complan.sample_point_ = 0;
 
                 IsStop = false;
