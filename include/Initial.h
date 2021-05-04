@@ -105,6 +105,11 @@ public:
     void *h2p_read_press_sensor_left_pulse_addr;
     //press test end
 
+    //Motor feedback data test
+    void *p2h_set_hps_read_motor_data_leftfoot_addr;
+    void *p2h_motor_data_leftfoot_addr;
+    void *h2p_read_motor_data_leftfoot_pulse_addr;
+    
     void *axi_virtual_base;
     void *robot_motion_addr;
     void *sensor_data_addr;
