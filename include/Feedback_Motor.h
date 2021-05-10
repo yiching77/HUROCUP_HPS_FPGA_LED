@@ -12,7 +12,7 @@ class Feedback_Motor
         void load_motor_data_left_foot();
         void update_motor_data_left_foot();
         int motor_data_left_foot_[6];
-    private:
+    // private:
         bool update_motor_data_left_foot_flag_;
 };
 

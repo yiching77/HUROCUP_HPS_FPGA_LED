@@ -36,6 +36,7 @@
 #include "Inverse_kinematic.h"
 #include "Walkinggait.h"
 #include "Sensor.h"
+#include "Feedback_Motor.h";
 //#include "inc\WalkingGait.h"
 /********************************************************/
 
@@ -46,8 +47,9 @@ Walkinggait walkinggait;
 Datamodule datamodule;
 SensorDataProcess sensor;
 BalanceControl balance;
-
+Feedback_Motor feedbackmotor;
 struct timeval tstart, tend;
 double timeuse;
+extern Feedback_Motor feedbackmotor;
 
 #endif /* MAIN_H_ */

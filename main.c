@@ -25,7 +25,11 @@ int main()
 	gettimeofday(&walkinggait.timer_start_, NULL);
 
 	while(1)
-	{
+	{ 
+		printf(" ");
+		feedbackmotor.load_motor_data_left_foot();
+		printf("\n data :%d , %d , %d\n",feedbackmotor.motor_data_left_foot_[0], feedbackmotor.motor_data_left_foot_[1], feedbackmotor.update_motor_data_left_foot_flag_);
+		// usleep(1000 * 1000);
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)
 			datamodule.motion_execute();
@@ -61,7 +65,7 @@ int main()
 			// balance.balance_control();
 		}
 
- 		// printf(" ");		
+ 		printf(" ");		
 		if((walkinggait.locus_flag_))
 		{
  

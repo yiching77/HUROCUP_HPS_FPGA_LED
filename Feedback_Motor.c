@@ -19,6 +19,7 @@ void Feedback_Motor::load_motor_data_left_foot()
 
     for(;;)
     {
+        printf("\nstate = %d\n", state);
         if(state == 0)
         {
             update_motor_data_left_foot_flag_ = false;
