@@ -19,7 +19,6 @@ void Feedback_Motor::load_motor_data_left_foot()
 
     for(;;)
     {
-        printf("\nstate = %d\n", state);
         if(state == 0)
         {
             update_motor_data_left_foot_flag_ = false;
@@ -59,7 +58,7 @@ void Feedback_Motor::update_motor_data_left_foot()
     if(update_motor_data_left_foot_flag_)
     {
         int count = 0;
-        // printf("\n data :%d , %d \n",motor_data_left_foot_[0],motor_data_left_foot_[1]);
+        // printf("\n data :ID10_%d , ID11_%d, ID12_%d , ID13_%d, ID14_%d , ID15_%d \n",motor_data_left_foot_[0],motor_data_left_foot_[1], motor_data_left_foot_[2],motor_data_left_foot_[3], motor_data_left_foot_[4],motor_data_left_foot_[5]);
     }
 }
 //right foot
@@ -70,7 +69,6 @@ void Feedback_Motor::load_motor_data_right_foot()
 
     for(;;)
     {
-        printf("\nstate = %d\n", state);
         if(state == 0)
         {
             update_motor_data_right_foot_flag_ = false;
@@ -110,6 +108,6 @@ void Feedback_Motor::update_motor_data_right_foot()
     if(update_motor_data_right_foot_flag_)
     {
         int count = 0;
-        // printf("\n data :%d , %d \n",motor_data_left_foot_[0],motor_data_left_foot_[1]);
+        // printf("\n data :ID16_%d , ID17_%d, ID18_%d , ID19_%d, ID20_%d , ID21_%d \n",motor_data_right_foot_[0],motor_data_right_foot_[1], motor_data_right_foot_[2],motor_data_right_foot_[3], motor_data_right_foot_[4],motor_data_right_foot_[5]);
     }
 }

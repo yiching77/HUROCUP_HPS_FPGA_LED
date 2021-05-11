@@ -29,7 +29,9 @@ int main()
 		printf(" ");
 		feedbackmotor.load_motor_data_left_foot();
 		feedbackmotor.load_motor_data_right_foot();
-		// printf("\n data :%d , %d , %d , %d , %d\n",feedbackmotor.motor_data_left_foot_[0], feedbackmotor.motor_data_left_foot_[1], feedbackmotor.motor_data_right_foot_[0], feedbackmotor.motor_data_right_foot_[1], feedbackmotor.update_motor_data_right_foot_flag_);
+        // printf("\n data :ID10_%d , ID11_%d, ID12_%d , ID13_%d, ID14_%d , ID15_%d \n",feedbackmotor.motor_data_left_foot_[0],feedbackmotor.motor_data_left_foot_[1], feedbackmotor.motor_data_left_foot_[2],feedbackmotor.motor_data_left_foot_[3], feedbackmotor.motor_data_left_foot_[4],feedbackmotor.motor_data_left_foot_[5]);
+        // printf("\n data :ID16_%d , ID17_%d, ID18_%d , ID19_%d, ID20_%d , ID21_%d \n",feedbackmotor.motor_data_right_foot_[0],feedbackmotor.motor_data_right_foot_[1], feedbackmotor.motor_data_right_foot_[2],feedbackmotor.motor_data_right_foot_[3], feedbackmotor.motor_data_right_foot_[4],feedbackmotor.motor_data_right_foot_[5]);
+	    // printf("\n data :ID10_%d , ID11_%d, ID12_%d , ID13_%d, ID14_%d , ID15_%d, ID16_%d , ID17_%d, ID18_%d , ID19_%d, ID20_%d , ID21_%d \n",feedbackmotor.motor_data_left_foot_[0],feedbackmotor.motor_data_left_foot_[1], feedbackmotor.motor_data_left_foot_[2],feedbackmotor.motor_data_left_foot_[3], feedbackmotor.motor_data_left_foot_[4],feedbackmotor.motor_data_left_foot_[5], feedbackmotor.motor_data_right_foot_[0],feedbackmotor.motor_data_right_foot_[1], feedbackmotor.motor_data_right_foot_[2],feedbackmotor.motor_data_right_foot_[3], feedbackmotor.motor_data_right_foot_[4],feedbackmotor.motor_data_right_foot_[5]);
 		// usleep(1000 * 1000);
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)
