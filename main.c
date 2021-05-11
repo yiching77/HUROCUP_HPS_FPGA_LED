@@ -22,13 +22,14 @@ int main()
 	IK.initial_inverse_kinematic();
 	walkinggait.initialize();
 
-	gettimeofday(&walkinggait.timer_start_, NULL);
+	gettimeofday(&walkinggait.timer_start_, NULL); 
 
 	while(1)
 	{ 
 		printf(" ");
 		feedbackmotor.load_motor_data_left_foot();
-		printf("\n data :%d , %d , %d\n",feedbackmotor.motor_data_left_foot_[0], feedbackmotor.motor_data_left_foot_[1], feedbackmotor.update_motor_data_left_foot_flag_);
+		feedbackmotor.load_motor_data_right_foot();
+		// printf("\n data :%d , %d , %d , %d , %d\n",feedbackmotor.motor_data_left_foot_[0], feedbackmotor.motor_data_left_foot_[1], feedbackmotor.motor_data_right_foot_[0], feedbackmotor.motor_data_right_foot_[1], feedbackmotor.update_motor_data_right_foot_flag_);
 		// usleep(1000 * 1000);
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)

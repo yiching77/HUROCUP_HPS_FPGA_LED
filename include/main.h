@@ -36,7 +36,7 @@
 #include "Inverse_kinematic.h"
 #include "Walkinggait.h"
 #include "Sensor.h"
-#include "Feedback_Motor.h";
+#include "Feedback_Motor.h"
 //#include "inc\WalkingGait.h"
 /********************************************************/
 
