@@ -16,6 +16,7 @@ public:
 	void send_sensor_data_to_ipc();
 	void load_sensor_setting();
 	void update_sensor_setting();
+    void sw_reset_sensor_setting();
 
     void load_imu();
     void update_imu();

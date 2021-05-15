@@ -108,6 +108,8 @@ public:
     void *axi_virtual_base;
     void *robot_motion_addr;
     void *sensor_data_addr;
+
+    void *h2p_imu_reset_addr;
 };
 
 #endif /*INITIAL_H_*/

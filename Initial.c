@@ -30,7 +30,9 @@ void Initial::initial_memory_mapping()
 		printf( "ERROR: mmap() failed...\n" );
 		close( fd );
 	}
-	
+
+	h2p_imu_reset_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + IMU_RESET_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+
 	h2p_lw_led_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + LED_DEBUG_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
 	h2p_lw_rst_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + SOFTWARE_RESET_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
 	p2h_pc_command_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + PC_COMMAND_BASE ) & ( unsigned long)( HW_REGS_MASK ) );

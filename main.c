@@ -26,6 +26,7 @@ int main()
 
 	while(1)
 	{
+		printf(" ");
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)
 			datamodule.motion_execute();

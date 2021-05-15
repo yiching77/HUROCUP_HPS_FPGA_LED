@@ -156,7 +156,37 @@ void SensorDataProcess::load_sensor_setting()
             }
         }
     }
+    sw_reset_sensor_setting();
     update_sensor_setting();
+}
+
+void SensorDataProcess::sw_reset_sensor_setting()
+{
+    int count = 0;
+    printf("SW = %d", *(uint32_t *)init.h2p_imu_reset_addr);
+    // usleep(1000 * 1000);
+    for(;;)
+    {
+        // update_sensor_setting_flag_ = false;
+        if(*(uint32_t *)init.h2p_imu_reset_addr)
+        {
+            imu_offset_reset_ = true;
+            continue;
+            printf("\nreset\n");
+            usleep(1000 * 1000);
+        }
+        else
+        {
+            break;
+        }    
+    }
+    if(imu_offset_reset_)
+        {
+            for(count=0; count<3; count++)
+                rpy_offset_[count] = rpy_raw_[count];
+            imu_offset_reset_ = false;
+            printf("\n\n\n\n\nimu_offset_reset_ = %d\n\n\n\n\n", imu_offset_reset_);
+        }
 }
 
 void SensorDataProcess::update_sensor_setting()
@@ -197,16 +227,16 @@ void SensorDataProcess::update_sensor_setting()
         }
         
         sensor_request_ = (sensor_setting_[count] >> 8) & 0x01;
-        imu_offset_reset_ = (sensor_setting_[count] >> 8) & 0x02;
+        // imu_offset_reset_ = (sensor_setting_[count] >> 8) & 0x02;
         force_state_ = (sensor_setting_[count] >> 8) & 0x04;
-      
-        
+        sw_reset_sensor_setting();
         get_sensor_setting_flag_ = true;
         if(imu_offset_reset_)
         {
             for(count=0; count<3; count++)
                 rpy_offset_[count] = rpy_raw_[count];
             imu_offset_reset_ = false;
+            printf("\n\n\n\n\nimu_offset_reset_ = %d\n\n\n\n\n", imu_offset_reset_);
         }
     }
 }
@@ -301,6 +331,7 @@ void SensorDataProcess::update_imu()
                 rpy_[count] -= 360;
         }
     }
+    printf("\nraw: %f , pitch: %f , yaw: %f ", rpy_[0], rpy_[1], rpy_[2]);
 }
 
 void SensorDataProcess::load_press_left()
