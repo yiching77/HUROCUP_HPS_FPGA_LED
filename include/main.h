@@ -11,7 +11,7 @@
 /******************* Define******************************/
 //#define main_debug    /* Turn debugging on */
 /********************************************************/
-#define ZMP 1
+
 /******************* Parameter **************************/
 
 /********************************************************/
@@ -38,6 +38,14 @@
 #include "Sensor.h"
 //#include "inc\WalkingGait.h"
 /********************************************************/
+
+Locus locus;
+InverseKinematic IK;
+Initial init;
+Walkinggait walkinggait;
+Datamodule datamodule;
+SensorDataProcess sensor;
+BalanceControl balance;
 
 struct timeval tstart, tend;
 double timeuse;
