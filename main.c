@@ -24,7 +24,7 @@ int main()
 
 	gettimeofday(&walkinggait.timer_start_, NULL);
 
-	while(1)
+	while(1) 
 	{
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)

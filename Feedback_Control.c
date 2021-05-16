@@ -64,14 +64,14 @@ void BalanceControl::initialize(const int control_cycle_msec)
 
     PIDleftfoot_hip_roll.setValueLimit(300, -300);
     PIDleftfoot_hip_pitch.setValueLimit(300, -300);
-    PIDleftfoot_hip_roll.setKpid(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
+    PIDleftfoot_hip_roll.setKpid(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
     PIDleftfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
     PIDleftfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
     PIDleftfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
 
 	PIDrightfoot_hip_roll.setValueLimit(300, -300);
     PIDrightfoot_hip_pitch.setValueLimit(300, -300);
-    PIDrightfoot_hip_roll.setKpid(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
+    PIDrightfoot_hip_roll.setKpid(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
     PIDrightfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
     PIDrightfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
     PIDrightfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
@@ -91,7 +91,7 @@ void BalanceControl::initialize(const int control_cycle_msec)
 	PIDrightfoot_zmp_y.setControlGoal(-4.5);
 	
 	PIDCoM_x.setValueLimit(7, -7);
-	PIDCoM_x.setKpid(0.03, 0, 0.02);  //0.03, 0, 0.02
+	PIDCoM_x.setKpid(0.07,0,0.02);//(0.03, 0, 0.02);  //0.03, 0, 0.02
 	PIDCoM_x.setControlGoal(0);
 
 	leftfoot_hip_roll = 0;
@@ -216,8 +216,8 @@ void BalanceControl::get_sensor_value()
 	double cog_x_filtered = pitch_imu_filtered_ - cog_pitch_offset_;
 	if(Points.Inverse_PointR_Z != Points.Inverse_PointL_Z)
 	{
-		foot_cog_x_ = 26.2 * sin(cog_x_filtered);
-		foot_cog_y_ = 26.2 * sin(cog_y_filtered);
+		foot_cog_x_ = 20.2 * sin(cog_x_filtered);//26.2 * sin(cog_x_filtered);
+		foot_cog_y_ = 20.2 * sin(cog_y_filtered);//26.2 * sin(cog_y_filtered);
 	}
 	else
 	{
@@ -362,6 +362,10 @@ void BalanceControl::balance_control()
 
 	if(sup_foot_ == leftfoot)
 	{
+		// if(walkinggait.step_length_<0)
+		// 	parameterinfo->points.IK_Point_LX += CoM_EPx_value.control_value_once;
+		// else
+		// 	parameterinfo->points.IK_Point_LX -= CoM_EPx_value.control_value_once;
 		//sup
 		//----------- pitch ---------------------
 		leftfoot_hip_pitch_value.control_value_once = PIDleftfoot_hip_pitch.calculateExpValue(passfilter_pres_imu_value[(int)imu::pitch].vel)*0.03;//dt = 0.03
@@ -383,6 +387,10 @@ void BalanceControl::balance_control()
 	}
 	else if(sup_foot_ == rightfoot)
 	{
+		// if(walkinggait.step_length_<0)
+		// 	parameterinfo->points.IK_Point_RX += CoM_EPx_value.control_value_once;
+		// else
+		// 	parameterinfo->points.IK_Point_RX -= CoM_EPx_value.control_value_once;
 		//sup
 		//----------- pitch ---------------------
 		rightfoot_hip_pitch_value.control_value_once = PIDleftfoot_hip_pitch.calculateExpValue(passfilter_pres_imu_value[(int)imu::pitch].vel)*0.03;//dt = 0.03
@@ -524,6 +532,9 @@ void BalanceControl::control_after_ik_calculation()
 {
 	if(sup_foot_ == leftfoot)
 	{
+		Points.Thta[10] = PI_2 -  (Points.Thta[10] - PI_2) * 0.5;
+		Points.Thta[16] = PI_2 +  (Points.Thta[16] - PI_2) * 1.8;
+		
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
 		Points.Thta[13] += leftfoot_ankle_pitch;
@@ -533,7 +544,7 @@ void BalanceControl::control_after_ik_calculation()
 		Points.Thta[17] += rightfoot_hip_pitch;
 		Points.Thta[19] += rightfoot_ankle_pitch;
 		Points.Thta[20] += rightfoot_ankle_roll;
-
+			// Points.Thta[10] = PI_2;
 		// if(leftfoot_hip_roll > 0)
 		// {
 		// 	Points.Thta[5] += leftfoot_hip_roll;
@@ -553,6 +564,9 @@ void BalanceControl::control_after_ik_calculation()
 	}
 	else if(sup_foot_ == rightfoot)
 	{
+		Points.Thta[10] = PI_2 +  (Points.Thta[10] - PI_2) * 1.8;
+		Points.Thta[16] = PI_2 -  (Points.Thta[16] - PI_2) * 0.5;
+
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
 		Points.Thta[13] += leftfoot_ankle_pitch;
@@ -563,6 +577,7 @@ void BalanceControl::control_after_ik_calculation()
 		Points.Thta[19] += rightfoot_ankle_pitch;
 		Points.Thta[20] += rightfoot_ankle_roll;
 
+			// Points.Thta[16] = PI_2;
 		// if(rightfoot_hip_roll > 0)
 		// {
 		// 	Points.Thta[5] += rightfoot_hip_roll;
@@ -580,10 +595,16 @@ void BalanceControl::control_after_ik_calculation()
 		// 	Points.Thta[1] -= pre_leftfoot_hip_roll;
 		// qq = 0;
 	}
+	// else
+	// {
+	// 	Points.Thta[10] *= 0.95;
+	// 	Points.Thta[16] *= 1.05;
+	// }
 
 	// compensate
 	// double gain = 1.05;	
-	if(Points.Inverse_PointR_Y < 0 && (original_ik_point_rz_ != original_ik_point_lz_))
+	if(Points.Inverse_PointR_Y <= 0 && (original_ik_point_rz_ != original_ik_point_lz_) )//|| parameterinfo->complan.walking_state == Repeat)
+	// if(walkinggait.py_ > 0 && (original_ik_point_rz_ != original_ik_point_lz_))
 	{
 		// Points.Thta[10] = PI_2 - (Points.Thta[10] - PI_2) *1;
 		// Points.Thta[16] = PI_2 + (Points.Thta[16] - PI_2) *1;
@@ -602,8 +623,10 @@ void BalanceControl::control_after_ik_calculation()
 		// }
 		// else
 		// {
-			Points.Thta[10] *= 0.95;
-			Points.Thta[16] *= 1.05;
+////////
+			// Points.Thta[10] *= 0.95;
+			// Points.Thta[16] *= 1.05;
+////////
 		// }
 		// double tmp = (Points.Thta[10] * 1.060) - Points.Thta[10];
 		// Points.Thta[10] -= tmp;
@@ -620,6 +643,7 @@ void BalanceControl::control_after_ik_calculation()
 		// Points.Thta[16] = PI_2 + fabs(tmp);
 	} 
 	else if(Points.Inverse_PointR_Y > 0 && (original_ik_point_rz_ != original_ik_point_lz_))
+	// else if(walkinggait.py_ < 0 && (original_ik_point_rz_ != original_ik_point_lz_))
 	{
 		// Points.Thta[10] = PI_2 + (Points.Thta[10] - PI_2) *1;
 		// Points.Thta[16] = PI_2 - (Points.Thta[16] - PI_2) *1;	
@@ -634,8 +658,10 @@ void BalanceControl::control_after_ik_calculation()
 		// }
 		// else
 		// {
-			Points.Thta[10] *= 0.95;
-			Points.Thta[16] *= 1.05;
+////////			
+			// Points.Thta[10] *= 0.95;
+			// Points.Thta[16] *= 1.05;
+////////			
 		// }
 		// double tmp = (Points.Thta[10] * 1.065) - Points.Thta[10];
 		// Points.Thta[10] -= tmp;

@@ -10,6 +10,7 @@ extern Initial init;
 extern Datamodule datamodule;
 extern BalanceControl balance;
 extern kickgait_space::KickingGait kickinggait;
+extern Walkinggait walkinggait;
 
 Locus::Locus()
 {
@@ -161,6 +162,17 @@ InverseKinematic::InverseKinematic()
         map_motor["motor_15"] = temp;
         map_motor["motor_17"] = temp;
         map_motor["motor_21"] = temp;
+		map_motor["motor_11_theta"] = temp;
+        map_motor["motor_15_theta"] = temp;
+        map_motor["motor_17_theta"] = temp;
+        map_motor["motor_21_theta"] = temp;
+		map_motor["Inverse_PointR_X"] = temp;
+        map_motor["Inverse_PointR_Y"] = temp;
+        map_motor["Inverse_PointR_Z"] = temp;
+        map_motor["Inverse_PointL_X"] = temp;
+        map_motor["Inverse_PointL_Y"] = temp;
+        map_motor["Inverse_PointL_Z"] = temp;
+        map_motor["point"] = temp;
 	// }
 }
 
@@ -424,7 +436,6 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
     else
     {
         Points.Thta[10] = atan2(Points.Inverse_PointL_Z, Points.Inverse_PointL_Y);//0.17896442525332481013377688544073-rotate_body_l_
-
     }
 
     if(Points.Inverse_PointL_X == 0)
@@ -496,21 +507,37 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
         Points.Thta[20] = PI - Points.Thta[16];
     else
         Points.Thta[20] = PI - Points.Thta[16]-rotate_body_l_;
+	map_motor.find("motor_11_theta")->second.push_back(Points.Thta[10]);
+	map_motor.find("motor_15_theta")->second.push_back(Points.Thta[14]);
+	map_motor.find("motor_17_theta")->second.push_back(Points.Thta[16]);
+	map_motor.find("motor_21_theta")->second.push_back(Points.Thta[20]);
 
+	balance.control_after_ik_calculation();
 // be
 	map_motor.find("motor_11")->second.push_back(Points.Thta[10] * PI_TO_OUTPUT);
 	map_motor.find("motor_15")->second.push_back(Points.Thta[14] * PI_TO_OUTPUT);
 	map_motor.find("motor_17")->second.push_back(Points.Thta[16] * PI_TO_OUTPUT);
 	map_motor.find("motor_21")->second.push_back(Points.Thta[20] * PI_TO_OUTPUT);
 
+
+
+	map_motor.find("Inverse_PointR_X")->second.push_back(Points.Inverse_PointR_X);
+	map_motor.find("Inverse_PointR_Y")->second.push_back(Points.Inverse_PointR_Y);
+	map_motor.find("Inverse_PointR_Z")->second.push_back(Points.Inverse_PointR_Z);
+	map_motor.find("Inverse_PointL_X")->second.push_back(Points.Inverse_PointL_X);
+	map_motor.find("Inverse_PointL_Y")->second.push_back(Points.Inverse_PointL_Y);
+	map_motor.find("Inverse_PointL_Z")->second.push_back(Points.Inverse_PointL_Z);
+	map_motor.find("point")->second.push_back(walkinggait.sample_point_);
+	
 	if(old_walking_stop == false && parameterinfo->complan.walking_stop == true)
 	{
 		saveData();
+		balance.saveData();
 	}
 	old_walking_stop = parameterinfo->complan.walking_stop;
 
 // end
-	balance.control_after_ik_calculation();
+	// balance.control_after_ik_calculation();
 
 	if(kickinggait.kicking_process_flag_)
 	{

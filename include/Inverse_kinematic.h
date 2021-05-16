@@ -22,6 +22,7 @@
 #include "DataModule.h"
 #include "Rmotor.h"
 #include "PID_Controller.h"
+#include "Walkinggait.h"
 /********************************************************/
 
 /******************* Define******************************/

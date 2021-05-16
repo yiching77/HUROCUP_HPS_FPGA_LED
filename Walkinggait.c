@@ -134,9 +134,9 @@ void Walkinggait::update_parameter()
             parameterinfo->parameters.Z_Swing_Range = tmp_arr[arr_index++];
             parameterinfo->parameters.Period_T = parameter_[parameter_cnt++] & 0x0000FFFF;
             parameterinfo->parameters.Period_T2 = (parameter_[parameter_cnt] & 0xFFFF0000) >> 16;
-            parameterinfo->parameters.Sample_Time = (parameter_[parameter_cnt] & 0x0000FF00) >> 8;
+            // parameterinfo->parameters.Sample_Time = (parameter_[parameter_cnt] & 0x0000FF00) >> 8;
             parameterinfo->parameters.OSC_LockRange = ((double)(parameter_[parameter_cnt++] & 0x000000FF)) / 100;
-
+            parameterinfo->parameters.Sample_Time = parameterinfo->parameters.Period_T/30;
             arr_index = 6;
             parameter_cnt = 5;
             parameterinfo->parameters.BASE_Default_Z = tmp_arr[arr_index++];
@@ -314,7 +314,7 @@ WalkingGaitByLIPM::WalkingGaitByLIPM()
     sample_point_ = 0;
     now_step_ = 0;
     pre_step_ = 0;
-    step_ = 999;//999;
+    step_ = 5000000;//999;
     g_ = 980;
     step_length_ = 0;//x
     last_step_length_ = 0;
@@ -381,7 +381,7 @@ void WalkingGaitByLIPM::resetParameter()
     sample_point_ = 0;
     now_step_ = 0;
     pre_step_ = 0;
-    step_ = 999;//999;
+    step_ = 5000000;//999;
     step_length_ = 0;
     last_step_length_ = 0;
     shift_length_ = 0;
@@ -498,7 +498,6 @@ void WalkingGaitByLIPM::process()
         plot_once_ = true;
         parameterinfo->complan.walking_stop = true;
         parameterinfo->walking_mode = 0;
-
     }
     else
         parameterinfo->complan.walking_state = Repeat;
