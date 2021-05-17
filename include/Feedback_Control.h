@@ -397,6 +397,15 @@ public:
 	PID_Controller PIDrightfoot_hip_roll;
     PID_Controller PIDrightfoot_hip_pitch;
     
+	BalanceParam leftfoot_ankle_roll_value;
+    BalanceParam leftfoot_ankle_pitch_value;
+	BalanceParam rightfoot_ankle_roll_value;
+	BalanceParam rightfoot_ankle_pitch_value;
+	PID_Controller PIDleftfoot_ankle_roll;
+    PID_Controller PIDleftfoot_ankle_pitch;
+	PID_Controller PIDrightfoot_ankle_roll;
+    PID_Controller PIDrightfoot_ankle_pitch;
+
 	BalanceParam leftfoot_EPx_value;	//EP = End point
 	BalanceParam leftfoot_EPy_value;
 	BalanceParam rightfoot_EPx_value;
