@@ -9,7 +9,7 @@ refer to user manual chapter 7 for details about the demo
 
 int main()
 {
- 
+	
 	int i=0;
 	bool stop_walk = false;
 	sensor.fall_Down_Flag_ = false;
