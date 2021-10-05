@@ -486,12 +486,12 @@ void WalkingGaitByLIPM::process()
         ready_to_stop_ = false;
     }
 
-    if(now_step_ <= 1)
+    if(now_step_ == step_)
     //     parameterinfo->complan.walking_state = FirstStep;
     // else if(now_step_ == 2 || now_step_ == 3)
-        parameterinfo->complan.walking_state = StartStep;
-    else if(now_step_ == step_)
         parameterinfo->complan.walking_state = StopStep;
+    else if(now_step_ <= 1)
+        parameterinfo->complan.walking_state = StartStep;
     else if(now_step_ > step_)
     {
         if_finish_ = true;
