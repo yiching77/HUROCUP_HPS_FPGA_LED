@@ -2,10 +2,10 @@
 ZMPProcess::ZMPProcess()
 {
 	ZMP_kg_offset = new int*[8];
-	ZMP_kg_offset[0] = new int[5]{550,6650,14300,20100,26200};
-	ZMP_kg_offset[1] = new int[5]{0  ,4300,10800,17500,25000};
+	ZMP_kg_offset[0] = new int[5]{0,6650,14300,20100,26200};
+	ZMP_kg_offset[1] = new int[5]{0  ,6730,13500,20100,25000};
 	ZMP_kg_offset[2] = new int[5]{0  ,6730,13500,20100,27000};
-	ZMP_kg_offset[3] = new int[5]{0  ,2000,6500 ,13500,21000};
+	ZMP_kg_offset[3] = new int[5]{0  ,6730,13500 ,20100,26200};
 	ZMP_kg_offset[4] = new int[5]{0,6700,13500,20150,27000};
 	ZMP_kg_offset[5] = new int[5]{0,6700,13400,20400,26000};
 	ZMP_kg_offset[6] = new int[5]{0,6550,13200,19700,26000};

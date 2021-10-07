@@ -21,25 +21,13 @@
 // #include <std_msgs/String.h>
 
 #define WALKING_INTERVAL 30000.0   //30 ms
-
+#define STARTSTEPCOUNTER 2
 typedef enum
 {
     etStart = 0x01,
     etStop = 0x02,
     etChangeValue = 0x04
 }etWalkingCmd;
-
-typedef enum
-{
-    Single = 0,
-    Continuous,
-    LC_up,
-    LC_down,
-    Long_Jump,
-    RKickB = 9,
-    LKickB
-    
-}etWalkingStatus;
 
 class WalkingGaitByLIPM
 {
@@ -48,9 +36,12 @@ public:
     ~WalkingGaitByLIPM();
 
     void initialize();
+    void readWalkData();
+    void readWalkParameter();
     void resetParameter();
     void process();
 
+    // double wtestComVelocity(double pre_x,double pre_v,double px,double t ,double T);
     double wComVelocityInit(double x0, double xt, double px, double t, double T);
     double wComPosition(double x0, double vx0, double px, double t, double T);
     double wFootPosition(const double start, const double length, const double t, const double T, const double T_DSP);
@@ -73,7 +64,9 @@ public:
     int period_t_;
     int time_point_, sample_point_, sample_time_;
     int now_step_, pre_step_;
+    int StartStepCount_, StartHeight_;
     int g_;
+    double T_DSP_;
     int step_, left_step_, right_step_;
     double TT_, t_;
     double Tc_;
@@ -85,7 +78,13 @@ public:
     double step_point_lz_, step_point_rz_, step_point_lthta_, step_point_rthta_;
     double vx0_, vy0_, px_, py_, pz_;
     double lpx_, rpx_, lpy_, rpy_, lpz_, rpz_, lpt_, rpt_;
-    // double T_DSP_;
+    //for stepping
+    double Control_Step_length_X_,Control_Step_length_Y_;
+    bool Stepout_flag_X_,Stepout_flag_Y_;
+    int Step_Count_;
+
+    // double test_v0_save;
+
     bool plot_once_, if_finish_;
     
     int name_cont_;
@@ -113,9 +112,8 @@ public:
     bool get_parameter_flag_;
     bool get_walkdata_flag_;
     bool locus_flag_;
-    bool LIPM_flag_;
     int motion_delay_;
-    int pre_walking_mode;
+    
 
 private:
     bool update_parameter_flag_;

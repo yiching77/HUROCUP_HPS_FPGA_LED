@@ -53,7 +53,7 @@
 #define SPEED_TRANS 32.0303030303030303030303030303 // (32767 / 1023)
 //#define Debug_IK
 /********************************************************/
-#define COM_HEIGHT 24.3//24.3
+#define COM_HEIGHT 26.9
 //#define Length_Pelvis 18.5
 //#define Length_Leg 30
 #define STAND_OFFSET_RX 0//-2.8
@@ -63,7 +63,7 @@
 #define STAND_OFFSET_LY 0//0.2
 #define STAND_OFFSET_LZ 0//-0.1
 
-#define SHOULDER_TO_COM 19.5
+#define SHOULDER_TO_COM 21
 
 #define MID 0
 #define STAND 0
@@ -199,7 +199,7 @@ public:
     void initial_points_process();
     void calculate_inverse_kinematic(int Motion_Delay);
     std::string DtoS(double value);
-	std::map<std::string, std::vector<double>> map_motor;       
+	std::map<std::string, std::vector<double>> map_motor;      
     void saveData();
     unsigned short update_crc(unsigned short , unsigned char *, unsigned short);
 
