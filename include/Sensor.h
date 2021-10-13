@@ -25,6 +25,10 @@ public:
     //test
     double rpy_[3];
     double imu_desire_[3];
+    double roll_pid_[3];
+    double pitch_pid_[3];
+    double com_pid_[3];
+    double foot_offset_[3];
 
     //fall down
     bool fall_Down_Flag_;
@@ -40,7 +44,14 @@ public:
 
     int press_right_[4];
     int press_left_[4];
-
+        bool sensor_request_;
+    bool imu_offset_reset_;   // imu offset reset
+    bool force_state_;
+    bool gain_set_;
+    bool roll_PID_set_;
+    bool pitch_PID_set_;
+    bool com_PID_set_;
+    bool foot_offset_set_;
 
 private:
     int rpy_from_fpga_[3];
@@ -55,9 +66,14 @@ private:
     unsigned int sensor_setting_[2];
     unsigned int imu_[2];
 
-    bool sensor_request_;
-    bool imu_offset_reset_;   // imu offset reset
-    bool force_state_;
+    // bool sensor_request_;
+    // bool imu_offset_reset_;   // imu offset reset
+    // bool force_state_;
+    // bool gain_set_;
+    // bool roll_PID_set_;
+    // bool pitch_PID_set_;
+    // bool com_PID_set_;
+    // bool foot_offset_set_;
 
     //press sensor
     bool update_press_right_flag_;
