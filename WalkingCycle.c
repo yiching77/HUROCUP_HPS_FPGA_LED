@@ -549,6 +549,7 @@ void WalkingCycle::LCwalkingprocess()
             parameterinfo->IsParametersLoad = false;
 //            parameterinfo->WalkFlag = false;
             parameterinfo->FpgaFlag = false;
+            parameterinfo->LCFinishFlag = true;
             //                  this->WalkEnable = 0;
             //                  WalkingProcess->Parameters->Initial();
             Sample_points_quater = 0;

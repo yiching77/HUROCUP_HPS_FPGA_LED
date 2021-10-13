@@ -44,7 +44,9 @@ int main()
 		walkinggait.timer_dt_ = (double)(1000000.0 * (walkinggait.timer_end_.tv_sec - walkinggait.timer_start_.tv_sec) + (walkinggait.timer_end_.tv_usec - walkinggait.timer_start_.tv_usec));
 
 		balance.get_sensor_value();
-
+		// printf("roll = %f , pitch = %f , yaw = %f \n", sensor.rpy_[0], sensor.rpy_[1], sensor.rpy_[2]);
+		// printf("qq = %d\n", parameterinfo->complan.walking_stop);
+		// usleep(100*1000);
 		if (balance.two_feet_grounded_ && sensor.fall_Down_Flag_)
 		{
 			sensor.stop_Walk_Flag_ = true;
@@ -52,7 +54,6 @@ int main()
 		{
 			sensor.stop_Walk_Flag_ = false;
 		}
-
 		if((walkinggait.timer_dt_ >= 30000.0) && !sensor.stop_Walk_Flag_)
 		{
 			walkinggait.walking_timer();
@@ -60,8 +61,7 @@ int main()
 			gettimeofday(&walkinggait.timer_start_, NULL);
 			// balance.balance_control();
 		}
-
- 		// printf(" ");		
+ 		// printf(" ");
 		if((walkinggait.locus_flag_))
 		{
  
@@ -72,12 +72,53 @@ int main()
 				walkinggait.LIPM_flag_ = false;
 			}
 			locus.get_cpg_with_offset();
-
+			// printf("motion_delay = %d", walkinggait.motion_delay_);
 			IK.calculate_inverse_kinematic(walkinggait.motion_delay_);
 			locus.do_motion();
 
 			walkinggait.locus_flag_ = false;
 		}
+		if(parameterinfo->LCFinishFlag  && parameterinfo->LCBalanceOn)
+		{
+			i++;
+			if(i>290)
+			{
+				parameterinfo->LCFinishFlag = false;
+				parameterinfo->LCBalanceFlag = false;
+				balance.setSupportFoot();
+				balance.balance_control();
+				balance.LCEndPointControl();
+				locus.get_cpg_with_offset();
+				IK.calculate_inverse_kinematic(30);
+				locus.do_motion();
+				balance.saveData();
+				IK.saveData();
+				i = 0;
+			}
+			else if(i>200)
+			{
+				parameterinfo->LCBalanceFlag = true;
+				balance.setSupportFoot();
+				balance.balance_control();
+				locus.get_cpg_with_offset();
+				IK.calculate_inverse_kinematic(30);
+				locus.do_motion();
+			}
+			else if(i>90)
+			{
+				balance.setSupportFoot();
+				balance.balance_control();
+				locus.get_cpg_with_offset();
+				IK.calculate_inverse_kinematic(30);
+				locus.do_motion();
+			}
+		}
+		else
+		{
+			parameterinfo->LCFinishFlag = false;
+		}
+        //     printf("LCBalanceOn = %d\n", parameterinfo->LCBalanceOn);
+		// usleep(100 * 1000);
 	}
  
 		if(walkinggait.plot_once_ == true)

@@ -318,6 +318,7 @@ public:
 	void setSupportFoot();
 	void resetControlValue();
 	void endPointControl();
+	void LCEndPointControl();
 	float calculateCOMPosbyLIPM(float pos_adj, float vel);
 
 	double control_cycle_sec_;
@@ -396,6 +397,8 @@ public:
     PID_Controller PIDleftfoot_hip_pitch;
 	PID_Controller PIDrightfoot_hip_roll;
     PID_Controller PIDrightfoot_hip_pitch;
+	PID_Controller PIDleftfoot_stand_pitch;
+	PID_Controller PIDrightfoot_stand_pitch;
     
 	BalanceParam leftfoot_EPx_value;	//EP = End point
 	BalanceParam leftfoot_EPy_value;
@@ -433,7 +436,6 @@ public:
     float rightfoot_ankle_pitch;
 	float pre_leftfoot_hip_roll;
 	float pre_rightfoot_hip_roll;
-	int qq, ww;
 
 	// for debug
 	int now_step_, last_step_;
@@ -461,6 +463,9 @@ public:
 	std::map<std::string, std::vector<float>> map_CoM;
 
 	int name_cont_;
+	float tmp_total;
+	float tmp;
+	bool flag = false;
 	//LIPM end
 };
 

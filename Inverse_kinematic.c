@@ -62,14 +62,22 @@ void Locus::get_cpg_with_offset(){
     Points.Inverse_Uncontrol_PointL_Y	= parameterinfo->points.IK_Point_LY;
     Points.Inverse_PointL_Z				= parameterinfo->points.IK_Point_LZ;
     Points.Inverse_PiontL_Thta			= parameterinfo->points.IK_Point_LThta;
-
+	// if(parameterinfo->complan.walking_stop)
+	// {
+	// 	Points.Inverse_PointR_Z = COM_HEIGHT;
+	// 	Points.Inverse_PointL_Z = COM_HEIGHT;
+	// }
+	// else
+	// {
+		// Points.Inverse_PointR_Z	= parameterinfo->points.IK_Point_RZ;
+		// Points.Inverse_PointL_Z	= parameterinfo->points.IK_Point_LZ;
+	// }
 	Points.Inverse_PointR_X = Points.Inverse_Uncontrol_PointR_X	+STAND_OFFSET_RX;
 	Points.Inverse_PointR_Y = Points.Inverse_Uncontrol_PointR_Y	+STAND_OFFSET_RY;
 	Points.Inverse_PointR_Z = Points.Inverse_PointR_Z			+STAND_OFFSET_RZ;
 	Points.Inverse_PointL_X = Points.Inverse_Uncontrol_PointL_X	+STAND_OFFSET_LX;
 	Points.Inverse_PointL_Y = Points.Inverse_Uncontrol_PointL_Y	+STAND_OFFSET_LY;
 	Points.Inverse_PointL_Z = Points.Inverse_PointL_Z			+STAND_OFFSET_LZ;
-
 	// printf("L_X: %f, L_Y: %f, L_Z: %f, L_T: %f\n", Points.Inverse_PointL_X, Points.Inverse_PointL_Y, Points.Inverse_PointL_Z, Points.Inverse_PiontL_Thta);
 	// printf("R_X: %f, R_Y: %f, R_Z: %f, R_T: %f\n\n",Points.Inverse_PointR_X, Points.Inverse_PointR_Y, Points.Inverse_PointR_Z, Points.Inverse_PiontR_Thta);
 	// printf("W_STATE = %d\tS_MODE = %d\tL_TIME = %d\n", walking_state_, sensor_mode_, (locus_time_&0xff));
@@ -498,20 +506,20 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
         Points.Thta[20] = PI - Points.Thta[16]-rotate_body_l_;
 
 // be
-	map_motor.find("motor_11")->second.push_back(Points.Thta[10] * PI_TO_OUTPUT);
-	map_motor.find("motor_15")->second.push_back(Points.Thta[14] * PI_TO_OUTPUT);
-	map_motor.find("motor_17")->second.push_back(Points.Thta[16] * PI_TO_OUTPUT);
-	map_motor.find("motor_21")->second.push_back(Points.Thta[20] * PI_TO_OUTPUT);
+	map_motor.find("motor_11")->second.push_back(Points.Thta[11] * PI_TO_OUTPUT);
+	map_motor.find("motor_15")->second.push_back(Points.Thta[13] * PI_TO_OUTPUT);
 
-	if(old_walking_stop == false && parameterinfo->complan.walking_stop == true)
-	{
-		saveData();
-	}
-	old_walking_stop = parameterinfo->complan.walking_stop;
+	// if(old_walking_stop == false && parameterinfo->complan.walking_stop == true)
+	// {
+	// 	saveData();
+	// }
+	// old_walking_stop = parameterinfo->complan.walking_stop;
 
 // end
 	balance.control_after_ik_calculation();
-
+	
+	map_motor.find("motor_17")->second.push_back(Points.Thta[11] * PI_TO_OUTPUT);
+	map_motor.find("motor_21")->second.push_back(Points.Thta[13] * PI_TO_OUTPUT);
 	if(kickinggait.kicking_process_flag_)
 	{
 		kickinggait.hipPostureControl();

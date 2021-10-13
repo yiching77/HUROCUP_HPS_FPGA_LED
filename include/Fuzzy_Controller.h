@@ -14,18 +14,18 @@
 
 /******************* Parameter **************************/
 //============ Fuzzy_X==================================
-#define InputX_error_PB 4.4
-#define InputX_error_PS 3
-#define InputX_derror_PB 35.0
-#define InputX_derror_PS 18.0
+#define InputX_error_PB 8//10//4.4
+#define InputX_error_PS 6//3
+#define InputX_derror_PB 40.0//25.0
+#define InputX_derror_PS 10.0//10.0
 
-#define PB_X 0.25//0.07//0.015
-#define PM_X 0.2//0.05//0.007
-#define PS_X 0.15//0.03
+#define PB_X 0.2//0.3//0.4//0.2//0.07//0.25//0.07//0.015
+#define PM_X 0.12//0.27//0.12//0.03//0.2//0.05//0.007
+#define PS_X 0.04//0.1//0.04//0.015//0.15//0.03
 #define ZE_X 0.0
-#define NS_X -PS_X
-#define NM_X -PM_X
-#define NB_X -PB_X
+#define NS_X -PS_X+0.1//0.2//0.2//0.1
+#define NM_X -PM_X+0.04//0.15//0.1//0.06
+#define NB_X -PB_X+0.02//0.06//0.01//0.01
 //============ Fuzzy_Y==================================
 #define InputY_error_PB 2.3//14
 #define InputY_error_PS 1.2//7
@@ -40,18 +40,18 @@
 #define NM_Y -PM_Y
 #define NB_Y -PB_Y
 //============ Fuzzy_Pitch==================================
-#define Pitch_error_PB 14
-#define Pitch_error_PS 10
-#define Pitch_derror_PB 35.0
-#define Pitch_derror_PS 20.0
+#define Pitch_error_PB 14//14
+#define Pitch_error_PS 5//10
+#define Pitch_derror_PB 30//35.0
+#define Pitch_derror_PS 10//20.0
 
-#define PB_P 0.01
-#define PM_P 0.0065
-#define PS_P 0.003
+#define PB_P 0.6//0.8//1.0//0.8//0.6//0.01
+#define PM_P 0.38//0.45//0.7//0.45//0.195//0.0065
+#define PS_P 0.09//0.09//0.25//0.09//0.09//0.003
 #define ZE_P 0.0
-#define NS_P -PS_P
-#define NM_P -PM_P
-#define NB_P -PB_P
+#define NS_P -PS_P+0.2//0.2//0.3//0.2
+#define NM_P -PM_P+0.1//0.25//0.2//0.1
+#define NB_P -PB_P+0.02//0.16//0.12//0.02
 ////============ Fuzzy_Roll==================================
 #define Roll_error_PB 23
 #define Roll_error_PS 15
@@ -97,20 +97,22 @@ public:
     double fuzzy_y_control(double Error, double Error_dot);
     double fuzzy_pitch_control(double Error, double Error_dot);
     double fuzzy_roll_control(double Error, double Error_dot);
+    
+    // double rule_p_[5][5];
 
 private:
-    double value_x_1_[5];  //error
-    double value_x_2_[5];  //error_dot
+    // double value_x_1_[5];  //error
+    // double value_x_2_[5];  //error_dot
     double value_y_1_[5];  //error
     double value_y_2_[5];  //error_dot
-    double value_p_1_[5];  //error
-    double value_p_2_[5];  //error_dot
+    // double value_p_1_[5];  //error
+    // double value_p_2_[5];  //error_dot
     double value_r_1_[5];  //error
     double value_r_2_[5];  //error_dot
 
-    double rule_x_[5][5];
+    // double rule_x_[5][5];
     double rule_y_[5][5];
-    double rule_p_[5][5];
+    // double rule_p_[5][5];
     double rule_r_[5][5];
 
     double muv_e_[5];
