@@ -53,7 +53,7 @@
 #define SPEED_TRANS 32.0303030303030303030303030303 // (32767 / 1023)
 //#define Debug_IK
 /********************************************************/
-#define COM_HEIGHT 24.3//24.3
+#define COM_HEIGHT 26.9//24.8//24.3 
 //#define Length_Pelvis 18.5
 //#define Length_Leg 30
 #define STAND_OFFSET_RX 0//-2.8

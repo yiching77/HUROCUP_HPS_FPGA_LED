@@ -143,14 +143,15 @@ void Walkinggait::update_parameter()
             parameterinfo->parameters.X_Swing_COM = tmp_arr[arr_index++];
             parameterinfo->parameters.Y_Swing_Shift = tmp_arr[arr_index++];
             parameterinfo->parameters.BASE_LIFT_Z = tmp_arr[arr_index++];
-            if(parameterinfo->parameters.Sample_Time == 0)
-            {
-                motion_delay_ = 30;
-            }
-            else
-            {
+            // if(parameterinfo->parameters.Sample_Time == 0)
+            // {
+            //     motion_delay_ = 30;
+            // }
+            // else
+            // {
                 motion_delay_ = parameterinfo->parameters.Period_T / parameterinfo->parameters.Sample_Time;
-            }     
+            // } 
+
         }
         else
         {
@@ -167,14 +168,14 @@ void Walkinggait::update_parameter()
             parameterinfo->parameters.Kick_Foot_Ankle_Upper_Pitch  = tmp_arr[arr_index++];
             parameterinfo->parameters.Support_Foot_Ankle_Upper_Pitch  = tmp_arr[arr_index++];
             parameterinfo->parameters.Sample_Time = parameterinfo->parameters.Period_T/30;
-            if(parameterinfo->parameters.Sample_Time == 0)
-            {
-                motion_delay_ = 30;
-            }
-            else
-            {
+            // if(parameterinfo->parameters.Sample_Time == 0)
+            // {
+            //     motion_delay_ = 30;
+            // }
+            // else
+            // {
                 motion_delay_ = parameterinfo->parameters.Period_T / parameterinfo->parameters.Sample_Time;
-            }      
+            // }     
         }
         get_parameter_flag_ = true;
     }
@@ -422,14 +423,14 @@ void WalkingGaitByLIPM::process()
             theta_ = parameterinfo->THTA;
         }
         lift_height_ = parameterinfo->parameters.BASE_Default_Z;
-        abs_theta_ = fabs(theta_);
+        abs_theta_ = fabs(theta_); 
         is_parameter_load_ = true;
     }
     parameterinfo->complan.sample_point_++;
     parameterinfo->complan.time_point_ = parameterinfo->complan.sample_point_*(parameterinfo->parameters.Period_T/parameterinfo->parameters.Sample_Time);
     sample_point_++;
     time_point_ = sample_point_ * sample_time_;
-    Tc_ = sqrt(COM_HEIGHT/g_); 
+    Tc_ = sqrt(COM_HEIGHT/g_);
 
     TT_ = (double)period_t_ * 0.001;
 
@@ -486,12 +487,13 @@ void WalkingGaitByLIPM::process()
         ready_to_stop_ = false;
     }
 
-    if(now_step_ <= 1)
+    if(now_step_ == step_)
     //     parameterinfo->complan.walking_state = FirstStep;
     // else if(now_step_ == 2 || now_step_ == 3)
-        parameterinfo->complan.walking_state = StartStep;
-    else if(now_step_ == step_)
         parameterinfo->complan.walking_state = StopStep;
+    else if(now_step_ <= 1)
+        parameterinfo->complan.walking_state = StartStep;
+
     else if(now_step_ > step_)
     {
         if_finish_ = true;
@@ -565,7 +567,7 @@ void WalkingGaitByLIPM::process()
             rpx_ = 0;
             lpy_ = wFootPosition(now_left_shift_, shift_length_, t_, TT_, T_DSP_);
             rpy_ = 0;
-            lpz_ = wFootPositionZ(lift_height_*1/2, t_, TT_, T_DSP_);
+            lpz_ = wFootPositionZ(lift_height_*1/3, t_, TT_, T_DSP_);
             rpz_ = 0;
             if(theta_<0)
             {

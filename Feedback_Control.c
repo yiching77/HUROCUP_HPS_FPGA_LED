@@ -65,21 +65,21 @@ void BalanceControl::initialize(const int control_cycle_msec)
     PIDleftfoot_hip_roll.setValueLimit(300, -300);
     PIDleftfoot_hip_pitch.setValueLimit(300, -300);
     PIDleftfoot_hip_roll.setKpid(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
-    PIDleftfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
+    PIDleftfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02	//(0.03, 0, 0.005)		//0.02,0,0.005
     PIDleftfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
     PIDleftfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
 
 	PIDrightfoot_hip_roll.setValueLimit(300, -300);
     PIDrightfoot_hip_pitch.setValueLimit(300, -300);
     PIDrightfoot_hip_roll.setKpid(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
-    PIDrightfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
+    PIDrightfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02	//(0.03, 0, 0.005)		//0.02,0,0.005
     PIDrightfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
     PIDrightfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
 
 	PIDleftfoot_zmp_x.setValueLimit(7, -7);
 	PIDleftfoot_zmp_y.setValueLimit(7, -7);
 	PIDleftfoot_zmp_x.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
-	PIDleftfoot_zmp_y.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
+	PIDleftfoot_zmp_y.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02 
 	PIDleftfoot_zmp_x.setControlGoal(0);
 	PIDleftfoot_zmp_y.setControlGoal(4.5);
 
@@ -524,9 +524,8 @@ void BalanceControl::control_after_ik_calculation()
 {
 	if(sup_foot_ == leftfoot)
 	{
-		Points.Thta[10] = PI_2 -  (Points.Thta[10] - PI_2) * 0.5;
-		Points.Thta[16] = PI_2 +  (Points.Thta[16] - PI_2) * 1.8;
-		
+		Points.Thta[10] = PI_2 -  (Points.Thta[10] - PI_2) * 0.4;			//0.5	//0.1	//0.3	//(0.5)
+		Points.Thta[16] = PI_2 +  (Points.Thta[16] - PI_2) * 1.3;			//1.8	//0.5	//1		//(1.5)
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
 		Points.Thta[13] += leftfoot_ankle_pitch;
@@ -557,8 +556,8 @@ void BalanceControl::control_after_ik_calculation()
 	else if(sup_foot_ == rightfoot)
 	{
 		
-		Points.Thta[10] = PI_2 +  (Points.Thta[10] - PI_2) * 1.8;
-		Points.Thta[16] = PI_2 -  (Points.Thta[16] - PI_2) * 0.5;
+		Points.Thta[10] = PI_2 +  (Points.Thta[10] - PI_2) * 1.3;			//1.8	//0.5	//1		//(1.5)
+		Points.Thta[16] = PI_2 -  (Points.Thta[16] - PI_2) * 0.4;			//0.5	//0.1	//0.3	//(0.5)
 
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
