@@ -36,6 +36,7 @@
 #include "Inverse_kinematic.h"
 #include "Walkinggait.h"
 #include "Sensor.h"
+#include "hand_kinetic_base.h"
 //#include "inc\WalkingGait.h"
 /********************************************************/
 
@@ -46,6 +47,7 @@ Walkinggait walkinggait;
 Datamodule datamodule;
 SensorDataProcess sensor;
 BalanceControl balance;
+Hand_InverseKinematic HandIK;
 
 struct timeval tstart, tend;
 double timeuse;

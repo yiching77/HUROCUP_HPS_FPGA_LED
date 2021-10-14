@@ -158,9 +158,16 @@ InverseKinematic::InverseKinematic()
 	// if(map_motor.empty())
 	// {
 		map_motor["motor_11"] = temp;
-        map_motor["motor_15"] = temp;
+        map_motor["motor_12"] = temp;
+        map_motor["motor_13"] = temp;
+        map_motor["motor_14"] = temp;
+		map_motor["motor_15"] = temp;
         map_motor["motor_17"] = temp;
+        map_motor["motor_18"] = temp;
+        map_motor["motor_19"] = temp;
+		map_motor["motor_20"] = temp;
         map_motor["motor_21"] = temp;
+
 	// }
 }
 
@@ -274,8 +281,6 @@ void InverseKinematic::initial_inverse_kinematic()
 	output_base_[10] += 0;
 	output_base_[16] -= 0;
 	Parameters.Body_Pitch_tmp = Parameters.Body_Pitch;
-
-
 }
 
 void InverseKinematic::initial_parameters(){
@@ -496,20 +501,9 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
         Points.Thta[20] = PI - Points.Thta[16];
     else
         Points.Thta[20] = PI - Points.Thta[16]-rotate_body_l_;
+	
 
-// be
-	map_motor.find("motor_11")->second.push_back(Points.Thta[10] * PI_TO_OUTPUT);
-	map_motor.find("motor_15")->second.push_back(Points.Thta[14] * PI_TO_OUTPUT);
-	map_motor.find("motor_17")->second.push_back(Points.Thta[16] * PI_TO_OUTPUT);
-	map_motor.find("motor_21")->second.push_back(Points.Thta[20] * PI_TO_OUTPUT);
 
-	if(old_walking_stop == false && parameterinfo->complan.walking_stop == true)
-	{
-		saveData();
-	}
-	old_walking_stop = parameterinfo->complan.walking_stop;
-
-// end
 	balance.control_after_ik_calculation();
 
 	if(kickinggait.kicking_process_flag_)
@@ -518,6 +512,15 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
 		kickinggait.ankleBalanceControl();
 		kickinggait.hipPitchControl();
 	}
+
+
+	if(old_walking_stop == false && parameterinfo->complan.walking_stop == true)
+	{
+		balance.saveData();
+		saveData();
+	}
+	old_walking_stop = parameterinfo->complan.walking_stop;
+
 
     for( i = 0; i < 21; i++)
     {
@@ -577,6 +580,18 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
 		*((uint32_t *)init.robot_motion_addr+(2*i)) = output_angle_[i];
 		// printf("32\n");
     }
+
+	map_motor.find("motor_11")->second.push_back((double)output_angle_[10]);
+	map_motor.find("motor_12")->second.push_back((double)output_angle_[11]);
+	map_motor.find("motor_13")->second.push_back((double)output_angle_[12]);
+	map_motor.find("motor_14")->second.push_back((double)output_angle_[13]);
+	map_motor.find("motor_15")->second.push_back((double)output_angle_[14]);
+
+	map_motor.find("motor_17")->second.push_back((double)output_angle_[16]);
+	map_motor.find("motor_18")->second.push_back((double)output_angle_[17]);
+	map_motor.find("motor_19")->second.push_back((double)output_angle_[18]);
+	map_motor.find("motor_20")->second.push_back((double)output_angle_[19]);
+	map_motor.find("motor_21")->second.push_back((double)output_angle_[20]);
 	// printf("\n");
 	*((uint32_t *)init.robot_motion_addr+(42)) = Motion_Delay;
 	*((uint32_t *)init.robot_motion_addr+(43)) = 0x00000070;

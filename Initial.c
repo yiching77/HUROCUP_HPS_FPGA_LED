@@ -53,8 +53,7 @@ void Initial::initial_memory_mapping()
 	h2p_avalon_locus_addr_1 = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + AVALON_LOCUS_BASE + 0x4) & ( unsigned long)( HW_REGS_MASK ) );
 	h2p_avalon_sensor_data_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + AVA_SENSOR_DATA_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
 	h2p_avalon_sensor_data_addr_1 = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + AVA_SENSOR_DATA_BASE + 0x4) & ( unsigned long)( HW_REGS_MASK ) );
-
-	//press test 
+	//press sensor
 	p2h_set_hps_read_press_sensor_right_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + SET_HPS_READ_PRESS_SENSOR_RIGHT_BASE ) & ( unsigned long)( HW_REGS_MASK ) );	
 	p2h_set_hps_read_press_sensor_left_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + SET_HPS_READ_PRESS_SENSOR_LEFT_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
 	p2h_press_sensor_right_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + PRESS_SENSOR_RIGHT_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
@@ -62,7 +61,16 @@ void Initial::initial_memory_mapping()
 	h2p_read_press_sensor_right_pulse_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + READ_PRESS_SENSOR_RIGHT_PULSE_BASE ) & ( unsigned long)( HW_REGS_MASK ) );		
 	h2p_read_press_sensor_left_pulse_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + READ_PRESS_SENSOR_LEFT_PULSE_BASE ) & ( unsigned long)( HW_REGS_MASK ) );		
 	
-	//press test end
+	//hand data test
+	p2h_set_hps_read_hand_data_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + SET_HPS_READ_HAND_DATA_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+	p2h_hand_data_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + HAND_DATA_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+	h2p_read_hand_data_pulse_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + READ_HAND_DATA_PULSE_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+
+	//Motor Feedback data
+	p2h_set_hps_read_motor_data_leftfoot_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + SET_HPS_READ_MOTOR_DATA_LF_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+    p2h_motor_data_leftfoot_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + MOTOR_DATA_LF_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+    h2p_read_motor_data_leftfoot_pulse_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + READ_MOTOR_DATA_LF_PULSE_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+
 
 	axi_virtual_base = mmap( NULL, HW_FPGA_AXI_SPAN, ( PROT_READ | PROT_WRITE ), MAP_SHARED, fd, ALT_AXI_FPGASLVS_OFST );
 	if( virtual_base == MAP_FAILED ) {

@@ -163,6 +163,7 @@ void SensorDataProcess::update_sensor_setting()
 {
     if(update_sensor_setting_flag_)
     {
+        // printf("get sensor request.\n");
         int count = 0;
         short int tmp_angle = 0;
 
@@ -233,7 +234,7 @@ void SensorDataProcess::load_imu()
         }
         else if(state == 1)
         {
-            if(count <= 1)
+            if(count <= 5)
             {
                 imu_[count] = *(uint32_t *)init.p2h_imu_addr;
                 count++;
@@ -258,39 +259,104 @@ void SensorDataProcess::update_imu()
     {
         int count = 0;
         short int tmp_angle = 0;
+        short int tmp_accel = 0;
+        short int tmp_gyro = 0;
 
         if(imu_[0] == imu_[1])
             return;
-
+        //Roll
         tmp_angle = (imu_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[0] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+            rpy_raw_[0] = (double)((tmp_angle & 0x7FFF) * (-1) / 100.0);
         }
         else
         {
-            rpy_raw_[0] = (double)((tmp_angle & 0x7FFF) / 100.0);
+            rpy_raw_[0] = (double)((tmp_angle & 0xFFFF) / 100.0);
         }
-
+        //Pitch
         tmp_angle = imu_[count++] & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[1] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+            rpy_raw_[1] = (double)((tmp_angle & 0x7FFF) * (-1) / 100.0);
         }
         else
         {
-            rpy_raw_[1] = (double)((tmp_angle & 0x7FFF) / 100.0);
+            rpy_raw_[1] = (double)((tmp_angle & 0xFFFF) / 100.0);
         }
-
+        //Yaw
         tmp_angle = (imu_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[2] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+            rpy_raw_[2] = (double)((tmp_angle & 0x7FFF) * (-1) / 100.0);
         }
         else
         {
-            rpy_raw_[2] = (double)((tmp_angle & 0x7FFF) / 100.0);
+            rpy_raw_[2] = (double)((tmp_angle & 0xFFFF) / 100.0);
         }
+        count++;//jump reserve
+        //gyro _ x
+        tmp_gyro = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_gyro & 0x8000)
+        {
+            gyro_raw_[0] = (int)((tmp_gyro & 0x7FFF) * (-1));
+        }
+        else
+        {
+            gyro_raw_[0] = (int)((tmp_gyro & 0xFFFF));
+        }        
+        //gyro _ y
+        tmp_gyro = imu_[count++] & 0xFFFF;
+        if(tmp_gyro & 0x8000)
+        {
+            gyro_raw_[1] = (int)((tmp_gyro & 0x7FFF) * (-1));
+        }
+        else
+        {
+            gyro_raw_[1] = (int)((tmp_gyro & 0xFFFF));
+        }      
+        //gyro _ z
+        tmp_gyro = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_gyro & 0x8000)
+        {
+            gyro_raw_[2] = (int)((tmp_gyro & 0x7FFF) * (-1));
+        }
+        else
+        {
+            gyro_raw_[2] = (int)((tmp_gyro & 0xFFFF));
+        }     
+        count++;//jump reserve
+
+        //accel _ x
+        tmp_accel = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_accel & 0x8000)
+        {
+            accel_raw_[0] = (float)((tmp_accel & 0x7FFF) * (-1) / 100.0);
+        }
+        else
+        {
+            accel_raw_[0] = (float)((tmp_accel & 0xFFFF) / 100.0);
+        }        
+        //accel _ y
+        tmp_accel = imu_[count++] & 0xFFFF;
+        if(tmp_accel & 0x8000)
+        {
+            accel_raw_[1] = (float)((tmp_accel & 0x7FFF) * (-1) / 100.0);
+        }
+        else
+        {
+            accel_raw_[1] = (float)((tmp_accel & 0xFFFF) / 100.0);
+        }      
+        //accel _ z
+        tmp_accel = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_accel & 0x8000)
+        {
+            accel_raw_[2] = (float)((tmp_accel & 0x7FFF) * (-1) / 100.0);
+        }
+        else
+        {
+            accel_raw_[2] = (float)((tmp_accel & 0xFFFF) / 100.0);
+        }    
 
         for(count=0; count<3; count++)
         {
@@ -299,6 +365,15 @@ void SensorDataProcess::update_imu()
                 rpy_[count] += 360;
             else if(rpy_[count] > 180)
                 rpy_[count] -= 360;
+        }
+
+        for(count = 0; count <3 ;count++)
+        {
+            gyro_[count] = gyro_raw_[count];
+        }
+        for(count = 0; count < 3 ; count++)
+        {
+            accel_[count] = accel_raw_[count];
         }
     }
 }

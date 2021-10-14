@@ -15,7 +15,8 @@ enum WalkingState
     StopStep,
     MarkTimeStep,
     ForwardStep,
-    BackwardStep
+    BackwardStep,
+    // OutStep
 };
 typedef enum
 {

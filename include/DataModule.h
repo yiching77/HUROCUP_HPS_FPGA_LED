@@ -9,6 +9,10 @@
 
 /******************* Include libarary*********************/
 #include <stdio.h>
+#include <fstream>
+#include <vector>
+#include <map>
+#include <iostream>
 /********************************************************/
 
 /******************* Include module**********************/
@@ -33,6 +37,10 @@ public:
     void motion_execute();
     void set_stand();
 
+    std::string DtoS(double value);
+	std::map<std::string, std::vector<double>> map_motor;       
+    void saveData();
+
     unsigned char datamodule_cmd_;
     bool motion_execute_flag_;
     int totalangle_[21];
@@ -41,6 +49,7 @@ public:
 private:
     bool update_database_flag_;
     int database_[21];
+    int name_cont_;
     
 };
 
