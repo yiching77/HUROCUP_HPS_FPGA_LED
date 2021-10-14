@@ -62,37 +62,22 @@ void BalanceControl::initialize(const int control_cycle_msec)
     for(int i = 0; i < sizeof(butterfilter_imu)/sizeof(butterfilter_imu[0]); i++)
         butterfilter_imu[i].initialize();
 
-    PIDleftfoot_hip_roll.setValueLimit(300, -300);
-    PIDleftfoot_hip_pitch.setValueLimit(300, -300);
-    PIDleftfoot_hip_roll.setKpid(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
-    PIDleftfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
-    PIDleftfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
-    PIDleftfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
+	imu_desire_[0] = 0;
+	imu_desire_[1] = 0;
+	imu_desire_[2] = 0;
+	roll_pid_[0] = 0;
+	roll_pid_[1] = 0;
+	roll_pid_[2] = 0;
+	pitch_pid_[0] = 0.02;
+	pitch_pid_[1] = 0;
+	pitch_pid_[2] = 0.005;
+	com_pid_[0] = 0.03;
+	com_pid_[1] = 0;
+	com_pid_[2] = 0.02;
+	foot_offset_[0] = 1.8;
+	foot_offset_[1] = 0.5;
 
-	PIDrightfoot_hip_roll.setValueLimit(300, -300);
-    PIDrightfoot_hip_pitch.setValueLimit(300, -300);
-    PIDrightfoot_hip_roll.setKpid(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
-    PIDrightfoot_hip_pitch.setKpid(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
-    PIDrightfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
-    PIDrightfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
-
-	PIDleftfoot_zmp_x.setValueLimit(7, -7);
-	PIDleftfoot_zmp_y.setValueLimit(7, -7);
-	PIDleftfoot_zmp_x.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
-	PIDleftfoot_zmp_y.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
-	PIDleftfoot_zmp_x.setControlGoal(0);
-	PIDleftfoot_zmp_y.setControlGoal(4.5);
-
-	PIDrightfoot_zmp_x.setValueLimit(7, -7);
-	PIDrightfoot_zmp_y.setValueLimit(7, -7);
-	PIDrightfoot_zmp_x.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
-	PIDrightfoot_zmp_y.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
-	PIDrightfoot_zmp_x.setControlGoal(0);
-	PIDrightfoot_zmp_y.setControlGoal(-4.5);
-	
-	PIDCoM_x.setValueLimit(7, -7);
-	PIDCoM_x.setKpid(0.03, 0, 0.02);  //0.03, 0, 0.02
-	PIDCoM_x.setControlGoal(0);
+    initialize_parameter();
 
 	leftfoot_hip_roll = 0;
     leftfoot_hip_pitch = 0;
@@ -197,8 +182,65 @@ void BalanceControl::initialize(const int control_cycle_msec)
 	map_pitch.find("init_pitch_pos")->second.push_back(init_imu_value[(int)imu::pitch].pos);
 }
 
+void BalanceControl::initialize_parameter()
+{
+	PIDleftfoot_hip_roll.setValueLimit(300, -300);
+    PIDleftfoot_hip_pitch.setValueLimit(300, -300);
+    PIDleftfoot_hip_roll.setKpid(roll_pid_[0], roll_pid_[1], roll_pid_[2]);//(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
+    PIDleftfoot_hip_pitch.setKpid(pitch_pid_[0], pitch_pid_[1], pitch_pid_[2]);//(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
+    PIDleftfoot_hip_roll.setControlGoal(imu_desire_[0]);//(init_imu_value[(int)imu::roll].pos);
+    PIDleftfoot_hip_pitch.setControlGoal(imu_desire_[1]);//(init_imu_value[(int)imu::pitch].pos);
+
+	PIDrightfoot_hip_roll.setValueLimit(300, -300);
+    PIDrightfoot_hip_pitch.setValueLimit(300, -300);
+    PIDrightfoot_hip_roll.setKpid(roll_pid_[0], roll_pid_[1], roll_pid_[2]);//(0, 0, 0);//(0.005,0,0.003);//(0.03, 0.01, 0.01);//(0.03, 0.01, 0.015); //0.02, 0.01, 0.01 //0.03, 0, 0.02
+    PIDrightfoot_hip_pitch.setKpid(pitch_pid_[0], pitch_pid_[1], pitch_pid_[2]);//(0.02, 0, 0.005);//(0.03, 0, 0.02);  //0.03, 0, 0.02
+    PIDrightfoot_hip_roll.setControlGoal(imu_desire_[0]);//(init_imu_value[(int)imu::roll].pos);
+    PIDrightfoot_hip_pitch.setControlGoal(imu_desire_[1]);//(init_imu_value[(int)imu::pitch].pos);
+
+	PIDleftfoot_zmp_x.setValueLimit(7, -7);
+	PIDleftfoot_zmp_y.setValueLimit(7, -7);
+	PIDleftfoot_zmp_x.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
+	PIDleftfoot_zmp_y.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
+	PIDleftfoot_zmp_x.setControlGoal(0);
+	PIDleftfoot_zmp_y.setControlGoal(4.5);
+
+	PIDrightfoot_zmp_x.setValueLimit(7, -7);
+	PIDrightfoot_zmp_y.setValueLimit(7, -7);
+	PIDrightfoot_zmp_x.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
+	PIDrightfoot_zmp_y.setKpid(0.0125, 0, 0);  //0.0125, 0, 0.02
+	PIDrightfoot_zmp_x.setControlGoal(0);
+	PIDrightfoot_zmp_y.setControlGoal(-4.5);
+	
+	PIDCoM_x.setValueLimit(7, -7);
+	PIDCoM_x.setKpid(com_pid_[0], com_pid_[1], com_pid_[2]);//(0.03, 0, 0.02);  //0.03, 0, 0.02
+	PIDCoM_x.setControlGoal(imu_desire_[2]);//(0);
+
+}
+
+void BalanceControl::p2h_get_parameter()
+{
+	if(sensor.gain_set_)
+        memcpy(imu_desire_, sensor.imu_desire_, sizeof(sensor.imu_desire_));
+    else if(sensor.roll_PID_set_)
+        memcpy(roll_pid_, sensor.roll_pid_, sizeof(sensor.roll_pid_));
+    else if(sensor.pitch_PID_set_)
+        memcpy(pitch_pid_, sensor.pitch_pid_, sizeof(sensor.pitch_pid_));
+    else if(sensor.com_PID_set_)
+        memcpy(com_pid_, sensor.com_pid_, sizeof(sensor.com_pid_));
+    else if(sensor.foot_offset_set_)
+        memcpy(foot_offset_, sensor.foot_offset_, sizeof(sensor.foot_offset_));
+	initialize_parameter();
+	// cout<<"imu_desire_ = "<<imu_desire_[0]<<", "<<imu_desire_[1]<<", "<<imu_desire_[2]<<endl;
+    //     cout<<"roll_pid_ = "<<roll_pid_[0]<<", "<<roll_pid_[1]<<", "<<roll_pid_[2]<<endl;
+    //     cout<<"pitch_pid_ = "<<pitch_pid_[0]<<", "<<pitch_pid_[1]<<", "<<pitch_pid_[2]<<endl;
+    //     cout<<"com_pid_ = "<<com_pid_[0]<<", "<<com_pid_[1]<<", "<<com_pid_[2]<<endl;
+    //     cout<<"foot_offset_ = "<<foot_offset_[0]<<", "<<foot_offset_[1]<<", "<<foot_offset_[2]<<endl;
+}
 void BalanceControl::get_sensor_value()
 {
+	if(!sensor.sensor_request_)
+		p2h_get_parameter();
 	int i;
 	double rpy_radian[3] = {0};
 	for(int i=0; i<3; i++)
@@ -216,8 +258,10 @@ void BalanceControl::get_sensor_value()
 	double cog_x_filtered = pitch_imu_filtered_ - cog_pitch_offset_;
 	if(Points.Inverse_PointR_Z != Points.Inverse_PointL_Z)
 	{
-		foot_cog_x_ = 26.2 * sin(cog_x_filtered);
-		foot_cog_y_ = 26.2 * sin(cog_y_filtered);
+		foot_cog_x_ = 0;
+		foot_cog_y_ = 0;
+		// foot_cog_x_ = 26.2 * sin(cog_x_filtered);
+		// foot_cog_y_ = 26.2 * sin(cog_y_filtered);
 	}
 	else
 	{
@@ -325,6 +369,7 @@ void BalanceControl::resetControlValue()
 
 void BalanceControl::balance_control()
 {
+	p2h_get_parameter();
 	int i;
 	LinearAlgebra LA;
 
@@ -524,8 +569,8 @@ void BalanceControl::control_after_ik_calculation()
 {
 	if(sup_foot_ == leftfoot)
 	{
-		Points.Thta[10] = PI_2 -  (Points.Thta[10] - PI_2) * 0.5;
-		Points.Thta[16] = PI_2 +  (Points.Thta[16] - PI_2) * 1.8;
+		Points.Thta[10] = PI_2 -  (Points.Thta[10] - PI_2) * foot_offset_[0];//0.5;
+		Points.Thta[16] = PI_2 +  (Points.Thta[16] - PI_2) * foot_offset_[1];//1.8;
 		
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
@@ -557,8 +602,8 @@ void BalanceControl::control_after_ik_calculation()
 	else if(sup_foot_ == rightfoot)
 	{
 		
-		Points.Thta[10] = PI_2 +  (Points.Thta[10] - PI_2) * 1.8;
-		Points.Thta[16] = PI_2 -  (Points.Thta[16] - PI_2) * 0.5;
+		Points.Thta[10] = PI_2 +  (Points.Thta[10] - PI_2) * foot_offset_[1];//1.8;
+		Points.Thta[16] = PI_2 -  (Points.Thta[16] - PI_2) * foot_offset_[0];//0.5;
 
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
