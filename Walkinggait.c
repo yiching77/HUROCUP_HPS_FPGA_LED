@@ -142,6 +142,8 @@ void Walkinggait::update_parameter()
             parameterinfo->parameters.X_Swing_COM = tmp_arr[arr_index++];
             parameterinfo->parameters.Y_Swing_Shift = tmp_arr[arr_index++];
             parameterinfo->parameters.BASE_LIFT_Z = tmp_arr[arr_index++];
+            arr_index++;
+            parameterinfo->LCBalanceOn = tmp_arr[arr_index++];
             parameterinfo->parameters.Sample_Time = parameterinfo->parameters.Period_T/30;
             if(parameterinfo->parameters.Sample_Time == 0)
             {

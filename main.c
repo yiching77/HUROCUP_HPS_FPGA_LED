@@ -61,9 +61,7 @@ int main()
 		{
 			sensor.stop_Walk_Flag_ = false;
 		}
-
-
-		if((walkinggait.timer_dt_ >= 30000.0) /*&& !sensor.stop_Walk_Flag_*/)
+		if((walkinggait.timer_dt_ >= 30000.0))// && !sensor.stop_Walk_Flag_)
 		{
 			walkinggait.walking_timer();
 
@@ -71,13 +69,17 @@ int main()
 			// balance.balance_control();
 		}
 
- 		// printf(" ");		
+ 		// printf(" ");  
 		if((walkinggait.locus_flag_))
 		{
  
 			balance.setSupportFoot();
 			balance.endPointControl();
-			balance.balance_control();
+			if(walkinggait.LIPM_flag_)
+			{
+				balance.balance_control();
+				walkinggait.LIPM_flag_ = false;
+			}
 			locus.get_cpg_with_offset();
 
 			IK.calculate_inverse_kinematic(walkinggait.motion_delay_);
@@ -85,7 +87,45 @@ int main()
 
 			walkinggait.locus_flag_ = false;
 		}
-		// usleep(100000);
+		if(parameterinfo->LCFinishFlag  && parameterinfo->LCBalanceOn)
+		{
+			i++;
+			if(i>290)
+			{
+				parameterinfo->LCFinishFlag = false;
+				parameterinfo->LCBalanceFlag = false;
+				balance.setSupportFoot();
+				balance.balance_control();
+				balance.LCEndPointControl();
+				locus.get_cpg_with_offset();
+				IK.calculate_inverse_kinematic(30);
+				locus.do_motion();
+				balance.saveData();
+				IK.saveData();
+				i = 0;
+			}
+			else if(i>200)
+			{
+				parameterinfo->LCBalanceFlag = true;
+				balance.setSupportFoot();
+				balance.balance_control();
+				locus.get_cpg_with_offset();
+				IK.calculate_inverse_kinematic(30);
+				locus.do_motion();
+			}
+			else if(i>90)
+			{
+				balance.setSupportFoot();
+				balance.balance_control();
+				locus.get_cpg_with_offset();
+				IK.calculate_inverse_kinematic(30);
+				locus.do_motion();
+			}
+		}
+		else
+		{
+			parameterinfo->LCFinishFlag = false;
+		}
 	}
 
 		if(walkinggait.plot_once_ == true)

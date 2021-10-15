@@ -78,6 +78,9 @@ ParameterInfo::ParameterInfo()
     this->WalkFlag = false;
     this->IsParametersLoad = false;
     this->FpgaFlag = false;
+    this->LCFinishFlag = false;
+    this->LCBalanceFlag = false;
+    this->LCBalanceOn = false;
 
     this->serialack = 0;
     this->cpgack = false;

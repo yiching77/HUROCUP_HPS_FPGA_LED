@@ -148,6 +148,9 @@ public:
     bool WalkFlag;
     bool FpgaFlag;
     bool IsParametersLoad;
+    bool LCFinishFlag;
+    bool LCBalanceFlag;
+    bool LCBalanceOn;
     int counter;
 
     int serialack;
