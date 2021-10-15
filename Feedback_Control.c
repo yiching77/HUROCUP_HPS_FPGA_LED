@@ -723,10 +723,8 @@ void BalanceControl::control_after_ik_calculation()
 
 	if(sup_foot_ == leftfoot)
 	{
-
-
-		Points.Thta[10] = PI_2 -  (Points.Thta[10] - PI_2) * 0.4;			//0.5	//0.1	//0.3	//(0.5)
-		Points.Thta[16] = PI_2 +  (Points.Thta[16] - PI_2) * 1.3;			//1.8	//0.5	//1		//(1.5)
+		Points.Thta[10] = PI_2 -  (Points.Thta[10] - PI_2) * 0.5;
+		Points.Thta[16] = PI_2 +  (Points.Thta[16] - PI_2) * 1.8;
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
 		Points.Thta[13] += leftfoot_ankle_pitch;
@@ -759,8 +757,8 @@ void BalanceControl::control_after_ik_calculation()
 	}
 	else if(sup_foot_ == rightfoot)
 	{
-		Points.Thta[10] = PI_2 +  (Points.Thta[10] - PI_2) * 1.3;			//1.8	//0.5	//1		//(1.5)
-		Points.Thta[16] = PI_2 -  (Points.Thta[16] - PI_2) * 0.4;			//0.5	//0.1	//0.3	//(0.5)
+		Points.Thta[10] = PI_2 +  (Points.Thta[10] - PI_2) * 1.8;
+		Points.Thta[16] = PI_2 -  (Points.Thta[16] - PI_2) * 0.5;
 
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
