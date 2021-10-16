@@ -69,7 +69,8 @@ int main()
 			// balance.balance_control();
 		}
 
- 		// printf(" ");  
+ 		// printf(" "); 
+		//  usleep(50 * 1000); 
 		if((walkinggait.locus_flag_))
 		{
  
@@ -78,12 +79,12 @@ int main()
 			if(walkinggait.LIPM_flag_)
 			{
 				balance.balance_control();
-				walkinggait.LIPM_flag_ = false;
 			}
 			locus.get_cpg_with_offset();
 
 			IK.calculate_inverse_kinematic(walkinggait.motion_delay_);
 			locus.do_motion();
+			walkinggait.LIPM_flag_ = false;
 
 			walkinggait.locus_flag_ = false;
 		}

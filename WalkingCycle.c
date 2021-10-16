@@ -26,7 +26,7 @@ void WalkingCycle::walkingkindfunction(int walking_mode)
     case 8:
     case 7:
     case 1://Continuous
-        continuoustepfunction();
+        // continuoustepfunction();
         break;
     default:
         break;

@@ -311,6 +311,8 @@ public:
 
 	//	test
 	void initialize(const int control_cycle_msec);
+	void initialize_parameter();
+	void p2h_get_parameter();
 	void get_sensor_value();
 	void balance_control();
 	void control_after_ik_calculation();
@@ -446,6 +448,12 @@ public:
     float rightfoot_hip_pitch;
     float rightfoot_ankle_roll;
     float rightfoot_ankle_pitch;
+
+    double imu_desire_[3];
+    double roll_pid_[3];
+    double pitch_pid_[3];
+    double com_pid_[3];
+    double foot_offset_[3];
 
 	// for debug
 	int now_step_, last_step_;

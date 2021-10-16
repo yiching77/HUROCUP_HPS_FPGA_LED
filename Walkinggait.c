@@ -873,7 +873,7 @@ void WalkingGaitByLIPM::process()
         map_walk.find("ideal_zmp_y")->second.push_back(now_shift_+now_width_);
         map_walk.find("roll")->second.push_back(sensor.rpy_[0]);
         map_walk.find("pitch")->second.push_back(sensor.rpy_[1]);
-        map_walk.find("yaw")->second.push_back(sensor.rpy_[2]);//sensor.rpy_[2]);
+        map_walk.find("yaw")->second.push_back(parameterinfo->walking_mode);//sensor.rpy_[2]);
         map_walk.find("points")->second.push_back(now_width_);
         map_walk.find("t_")->second.push_back(t_);
         map_walk.find("time_point_")->second.push_back(time_point_);
