@@ -7,6 +7,29 @@ extern Initial init;
 Datamodule::Datamodule()
 {
 	datamodule_cmd_ = 0;
+		std::vector<double> temp;
+		map_motor["motor_01"] = temp;
+        map_motor["motor_02"] = temp;
+		map_motor["motor_03"] = temp;
+        map_motor["motor_04"] = temp;
+		map_motor["motor_05"] = temp;
+        map_motor["motor_06"] = temp;
+		map_motor["motor_07"] = temp;
+        map_motor["motor_08"] = temp;
+		map_motor["motor_09"] = temp;
+        map_motor["motor_10"] = temp;
+		map_motor["motor_11"] = temp;
+        map_motor["motor_12"] = temp;
+		map_motor["motor_13"] = temp;
+        map_motor["motor_14"] = temp;
+		map_motor["motor_15"] = temp;
+        map_motor["motor_16"] = temp;
+		map_motor["motor_17"] = temp;
+        map_motor["motor_18"] = temp;
+		map_motor["motor_19"] = temp;
+        map_motor["motor_20"] = temp;
+		map_motor["motor_21"] = temp;
+
 }
 
 Datamodule::~Datamodule()
@@ -96,6 +119,29 @@ void Datamodule::update_database()
 
 void Datamodule::motion_execute()
 {
+
+		// map_motor.find("motor_01")->second.push_back((double)totalangle_[0]);
+		// map_motor.find("motor_02")->second.push_back((double)totalangle_[1]);
+		// map_motor.find("motor_03")->second.push_back((double)totalangle_[2]);
+		// map_motor.find("motor_04")->second.push_back((double)totalangle_[3]);
+		// map_motor.find("motor_05")->second.push_back((double)totalangle_[4]);
+		// map_motor.find("motor_06")->second.push_back((double)totalangle_[5]);
+		// map_motor.find("motor_07")->second.push_back((double)totalangle_[6]);
+		// map_motor.find("motor_08")->second.push_back((double)totalangle_[7]);
+		// map_motor.find("motor_09")->second.push_back((double)totalangle_[8]);
+		// map_motor.find("motor_10")->second.push_back((double)totalangle_[9]);
+		// map_motor.find("motor_11")->second.push_back((double)totalangle_[10]);
+		// map_motor.find("motor_12")->second.push_back((double)totalangle_[11]);
+		// map_motor.find("motor_13")->second.push_back((double)totalangle_[12]);
+		// map_motor.find("motor_14")->second.push_back((double)totalangle_[13]);
+		// map_motor.find("motor_15")->second.push_back((double)totalangle_[14]);
+		// map_motor.find("motor_16")->second.push_back((double)totalangle_[15]);
+		// map_motor.find("motor_17")->second.push_back((double)totalangle_[16]);
+		// map_motor.find("motor_18")->second.push_back((double)totalangle_[17]);
+		// map_motor.find("motor_19")->second.push_back((double)totalangle_[18]);
+		// map_motor.find("motor_20")->second.push_back((double)totalangle_[19]);
+		// map_motor.find("motor_21")->second.push_back((double)totalangle_[20]);
+		// saveData();
 	// printf("motion exe\n");
 	int i=0;
 	unsigned short blk_size = 0;
@@ -249,4 +295,86 @@ void Datamodule::set_stand()
 	totalangle_[20] = 2047;
 
 	motion_execute();
+}
+
+string Datamodule::DtoS(double value)
+{
+    string str;
+    std::stringstream buf;
+    buf << value;
+    str = buf.str();
+    return str;
+}
+
+void Datamodule::saveData()
+{
+    char path[200] = "/data";
+	std::string tmp = std::to_string(name_cont_);
+	tmp = "/data_motor"+tmp+".csv";
+    strcat(path, tmp.c_str());
+
+	
+    fstream fp;
+    fp.open(path, std::ios::out);
+	std::string savedText;
+    std::map<std::string, std::vector<double>>::iterator it_motor;
+
+	for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+	{
+		savedText += it_motor->first;
+		if(it_motor == --map_motor.end())
+		{
+			savedText += "\n";
+			fp<<savedText;
+			savedText = "";
+		}
+		else
+		{
+			savedText += ",";
+		}		
+	}
+	it_motor = map_motor.begin();
+	int max_size = it_motor->second.size();
+
+	for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+	{
+		if(max_size < it_motor->second.size())
+            max_size = it_motor->second.size();
+	}
+	for(int i = 0; i < max_size; i++)
+    {
+        for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+        {
+            if(i < it_motor->second.size())
+            {
+                if(it_motor == --map_motor.end())
+                {
+                    savedText += std::to_string(it_motor->second[i]) + "\n";
+                    fp<<savedText;
+                    savedText = "";
+                }
+                else
+                {
+                    savedText += std::to_string(it_motor->second[i]) + ",";
+                }
+            }
+            else
+            {
+                if(it_motor == --map_motor.end())
+                {
+                    savedText += "none\n";
+                    fp<<savedText;
+                    savedText = "";
+                }
+                else
+                    savedText += "none,";
+            }
+        }
+    }
+    fp.close();
+    for(it_motor = map_motor.begin(); it_motor != map_motor.end(); it_motor++)
+        it_motor->second.clear();
+
+    name_cont_++;
+
 }

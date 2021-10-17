@@ -15,7 +15,8 @@ enum WalkingState
     StopStep,
     MarkTimeStep,
     ForwardStep,
-    BackwardStep
+    BackwardStep,
+    // OutStep
 };
 typedef enum
 {
@@ -147,6 +148,9 @@ public:
     bool WalkFlag;
     bool FpgaFlag;
     bool IsParametersLoad;
+    bool LCFinishFlag;
+    bool LCBalanceFlag;
+    bool LCBalanceOn;
     int counter;
 
     int serialack;

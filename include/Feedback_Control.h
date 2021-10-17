@@ -110,8 +110,10 @@ public:
     void setKpid(double Kp, double Ki, double Kd);
     void setControlGoal(float x1c = 0, float x2c = 0, float x3c = 0);
     void setValueLimit(float upper_limit, float lower_limit);
+	float limitCheck(float value);
     // void setDataValue(float value);
     float calculateExpValue(float value);
+    float calculateExpValue_roll(float value);	
     float getError();
     float getErrors();
     float getErrord();
@@ -309,6 +311,8 @@ public:
 
 	//	test
 	void initialize(const int control_cycle_msec);
+	void initialize_parameter();
+	void p2h_get_parameter();
 	void get_sensor_value();
 	void balance_control();
 	void control_after_ik_calculation();
@@ -318,6 +322,7 @@ public:
 	void setSupportFoot();
 	void resetControlValue();
 	void endPointControl();
+	void LCEndPointControl();
 	float calculateCOMPosbyLIPM(float pos_adj, float vel);
 
 	double control_cycle_sec_;
@@ -387,7 +392,7 @@ public:
     IMUParam passfilter_prev_imu_value[3];
 
 	ButterWorthIMUParam butterfilter_imu[3];
-
+	//hip
 	BalanceParam leftfoot_hip_roll_value;
     BalanceParam leftfoot_hip_pitch_value;
 	BalanceParam rightfoot_hip_roll_value;
@@ -396,6 +401,18 @@ public:
     PID_Controller PIDleftfoot_hip_pitch;
 	PID_Controller PIDrightfoot_hip_roll;
     PID_Controller PIDrightfoot_hip_pitch;
+	//ankle
+	BalanceParam leftfoot_ankle_roll_value;
+    BalanceParam leftfoot_ankle_pitch_value;
+	BalanceParam rightfoot_ankle_roll_value;
+	BalanceParam rightfoot_ankle_pitch_value;
+	PID_Controller PIDleftfoot_ankle_roll;
+    PID_Controller PIDleftfoot_ankle_pitch;
+	PID_Controller PIDrightfoot_ankle_roll;
+    PID_Controller PIDrightfoot_ankle_pitch;
+    
+	PID_Controller PIDleftfoot_stand_pitch;
+	PID_Controller PIDrightfoot_stand_pitch;
     
 	BalanceParam leftfoot_EPx_value;	//EP = End point
 	BalanceParam leftfoot_EPy_value;
@@ -431,9 +448,12 @@ public:
     float rightfoot_hip_pitch;
     float rightfoot_ankle_roll;
     float rightfoot_ankle_pitch;
-	float pre_leftfoot_hip_roll;
-	float pre_rightfoot_hip_roll;
-	int qq, ww;
+
+    double imu_desire_[3];
+    double roll_pid_[3];
+    double pitch_pid_[3];
+    double com_pid_[3];
+    double foot_offset_[3];
 
 	// for debug
 	int now_step_, last_step_;
@@ -459,8 +479,14 @@ public:
     std::map<std::string, std::vector<float>> map_pitch;
 	std::map<std::string, std::vector<float>> map_ZMP;
 	std::map<std::string, std::vector<float>> map_CoM;
+	std::map<std::string, std::vector<float>> map_Accel;
 
 	int name_cont_;
+	float tmp_total;
+	float tmp;
+	float tmp_com;
+	float tmp_com_total;
+	bool flag = false;
 	//LIPM end
 };
 

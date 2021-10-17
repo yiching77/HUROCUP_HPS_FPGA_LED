@@ -26,7 +26,7 @@ void WalkingCycle::walkingkindfunction(int walking_mode)
     case 8:
     case 7:
     case 1://Continuous
-        continuoustepfunction();
+        // continuoustepfunction();
         break;
     default:
         break;
@@ -549,6 +549,7 @@ void WalkingCycle::LCwalkingprocess()
             parameterinfo->IsParametersLoad = false;
 //            parameterinfo->WalkFlag = false;
             parameterinfo->FpgaFlag = false;
+            parameterinfo->LCFinishFlag = true;
             //                  this->WalkEnable = 0;
             //                  WalkingProcess->Parameters->Initial();
             Sample_points_quater = 0;
