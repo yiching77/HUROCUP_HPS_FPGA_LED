@@ -484,6 +484,8 @@ public:
 	int name_cont_;
 	float tmp_total;
 	float tmp;
+	float tmp_com;
+	float tmp_com_total;
 	bool flag = false;
 	//LIPM end
 };

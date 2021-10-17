@@ -69,8 +69,8 @@ int main()
 			// balance.balance_control();
 		}
 
- 		// printf(" "); 
-		//  usleep(50 * 1000); 
+ 		// printf(" ");
+		// usleep(100 * 1000); 
 		if((walkinggait.locus_flag_))
 		{
  
@@ -95,12 +95,6 @@ int main()
 			{
 				parameterinfo->LCFinishFlag = false;
 				parameterinfo->LCBalanceFlag = false;
-				balance.setSupportFoot();
-				balance.balance_control();
-				balance.LCEndPointControl();
-				locus.get_cpg_with_offset();
-				IK.calculate_inverse_kinematic(30);
-				locus.do_motion();
 				balance.saveData();
 				IK.saveData();
 				i = 0;
@@ -108,13 +102,8 @@ int main()
 			else if(i>200)
 			{
 				parameterinfo->LCBalanceFlag = true;
-				balance.setSupportFoot();
-				balance.balance_control();
-				locus.get_cpg_with_offset();
-				IK.calculate_inverse_kinematic(30);
-				locus.do_motion();
 			}
-			else if(i>90)
+			if(i>90)
 			{
 				balance.setSupportFoot();
 				balance.balance_control();

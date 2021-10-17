@@ -585,8 +585,9 @@ void BalanceControl::balance_control()
 			parameterinfo->points.IK_Point_LZ += 0.12;
 			parameterinfo->points.IK_Point_RZ += 0.12;
 		}
-		parameterinfo->points.IK_Point_LX -= CoM_EPx_value.control_value_total/90;
-		parameterinfo->points.IK_Point_RX -= CoM_EPx_value.control_value_total/90;
+		tmp_com_total -= tmp_com;
+		parameterinfo->points.IK_Point_LX = tmp_com_total;
+		parameterinfo->points.IK_Point_RX = tmp_com_total;
 	}
 	else if(parameterinfo->LCFinishFlag)
 	{
@@ -594,6 +595,8 @@ void BalanceControl::balance_control()
 		CoM_EPx_value.control_value_total += CoM_EPx_value.control_value_once;
 		parameterinfo->points.IK_Point_LX += CoM_EPx_value.control_value_once; 
 		parameterinfo->points.IK_Point_RX += CoM_EPx_value.control_value_once;
+		tmp_com_total = parameterinfo->points.IK_Point_LX;
+		tmp_com = tmp_com_total/90;
 	}
 	else if(parameterinfo->complan.walking_stop || !parameterinfo->LCFinishFlag)
 	{

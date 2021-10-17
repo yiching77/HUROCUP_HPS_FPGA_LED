@@ -126,6 +126,7 @@ public:
     bool locus_flag_;
     bool LIPM_flag_;
     int motion_delay_;
+    int pre_walking_mode;
     
 
 private:
