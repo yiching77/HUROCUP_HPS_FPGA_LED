@@ -629,7 +629,7 @@ void WalkingGaitByLIPM::process()
             lpy_ = now_left_shift_;
             rpy_ = wFootPositionRepeat(now_right_shift_, 0, t_, TT_, T_DSP_);
             lpz_ = 0;
-            rpz_ = wFootPositionZ(StartHeight_ * 1/2, t_, TT_, T_DSP_);
+            rpz_ = wFootPositionZ(/*StartHeight_*/ lift_height_ * 2/3, t_, TT_, T_DSP_);
             if(theta_*last_theta_ >= 0)
             {
                 if(theta_<0)
@@ -663,7 +663,7 @@ void WalkingGaitByLIPM::process()
             rpx_ = now_length_;
             lpy_ = wFootPositionRepeat(now_left_shift_, 0, t_, TT_, T_DSP_);
             rpy_ = now_right_shift_;
-            lpz_ = wFootPositionZ(StartHeight_ * 1/3, t_, TT_, T_DSP_);
+            lpz_ = wFootPositionZ(/*StartHeight_*/ lift_height_ * 1/2, t_, TT_, T_DSP_);
             rpz_ = 0;
             if(theta_*last_theta_ >= 0)
             {
