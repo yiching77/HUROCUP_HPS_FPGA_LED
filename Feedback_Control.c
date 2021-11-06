@@ -598,19 +598,14 @@ void BalanceControl::balance_control()
 		tmp_com_total = parameterinfo->points.IK_Point_LX;
 		tmp_com = tmp_com_total/90;
 	}
-	else if(parameterinfo->complan.walking_stop || !parameterinfo->LCFinishFlag)
+	else if(!parameterinfo->LCFinishFlag)
 	{
-		parameterinfo->points.IK_Point_LX = 0;
-		parameterinfo->points.IK_Point_RX = 0;
-		parameterinfo->points.IK_Point_LZ = 24.3;
-		parameterinfo->points.IK_Point_RZ = 24.3;
-		leftfoot_hip_pitch_value.initialize();
-		rightfoot_hip_pitch_value.initialize();
-		CoM_EPx_value.initialize();
-		leftfoot_hip_pitch = 0;
-		rightfoot_hip_pitch = 0;
+		InitEndPointControl();
 	}
-
+	if(parameterinfo->complan.walking_stop)
+	{
+		InitEndPointControl();
+	}
 	if(sup_foot_ == leftfoot)
 	{
 		// pres_ZMP.feet_pos.x pres_ZMP.feet_pos.y
@@ -657,7 +652,7 @@ void BalanceControl::balance_control()
 	else if(sup_foot_ == rightfoot)
 	{
 		//sup
-		PIDrightfoot_ankle_roll.setControlGoal(-4.5); 
+		PIDrightfoot_ankle_roll.setControlGoal(0);//(-4.5); 
 		//----------- pitch ---------------------
 		rightfoot_hip_pitch_value.control_value_once = PIDleftfoot_hip_pitch.calculateExpValue(sensor.gyro_[1])*0.03 ;//dt = 0.03
 		rightfoot_hip_pitch_value.control_value_total -= rightfoot_hip_pitch_value.control_value_once;
@@ -757,12 +752,20 @@ void BalanceControl::balance_control()
 	map_CoM.find("new_EP_rx")->second.push_back(parameterinfo->points.IK_Point_RX);
 }
 
-void BalanceControl::LCEndPointControl()
+void BalanceControl::InitEndPointControl()
 {
+	for(int i = 0; i < sizeof(butterfilter_imu)/sizeof(butterfilter_imu[0]); i++)
+        butterfilter_imu[i].initialize();
+	leftfoot_hip_pitch_value.initialize();
+	rightfoot_hip_pitch_value.initialize();
+	CoM_EPx_value.initialize();
+	PIDCoM_x.initParam();
 	parameterinfo->points.IK_Point_LX = 0;
 	parameterinfo->points.IK_Point_RX = 0;
 	parameterinfo->points.IK_Point_LZ = 24.3;
 	parameterinfo->points.IK_Point_RZ = 24.3;
+	leftfoot_hip_pitch = 0;
+	rightfoot_hip_pitch = 0;
 }
 
 void BalanceControl::endPointControl()
@@ -896,13 +899,13 @@ void BalanceControl::control_after_ik_calculation()
 
 		Points.Thta[10] += leftfoot_hip_roll;
 		Points.Thta[11] += leftfoot_hip_pitch;
-		Points.Thta[13] += leftfoot_ankle_pitch;
-		Points.Thta[14] += leftfoot_ankle_roll;
+		// Points.Thta[13] += leftfoot_ankle_pitch;
+		// Points.Thta[14] += leftfoot_ankle_roll;
 
 		Points.Thta[16] += rightfoot_hip_roll;
 		Points.Thta[17] += rightfoot_hip_pitch;
-		Points.Thta[19] += rightfoot_ankle_pitch;
-		Points.Thta[20] += rightfoot_ankle_roll;
+		// Points.Thta[19] += rightfoot_ankle_pitch;
+		// Points.Thta[20] += rightfoot_ankle_roll;
 	}
 	else if(!parameterinfo->LCBalanceFlag)
 	{ 
