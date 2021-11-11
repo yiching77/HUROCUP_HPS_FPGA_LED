@@ -143,12 +143,12 @@ void BalanceControl::initialize(const int control_cycle_msec)
 	roll_pid_[2] = 0;
 	pitch_pid_[0] = 0.03;
 	pitch_pid_[1] = 0;
-	pitch_pid_[2] = 0.05;
-	com_pid_[0] = 0.02;
+	pitch_pid_[2] = 0.02;
+	com_pid_[0] = 0.03;
 	com_pid_[1] = 0;
-	com_pid_[2] = 0.05;
-	foot_offset_[0] = 0.5;
-	foot_offset_[1] = 1.8;
+	com_pid_[2] = 0.02;
+	foot_offset_[0] = 0.8;
+	foot_offset_[1] = 1.5;
 
     initialize_parameter();
 
