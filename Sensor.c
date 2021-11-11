@@ -163,44 +163,99 @@ void SensorDataProcess::update_sensor_setting()
 {
     if(update_sensor_setting_flag_)
     {
+        // printf("get sensor request.\n");
         int count = 0;
-        short int tmp_angle = 0;
+        // short int tmp_angle = 0;
 
-        tmp_angle = (sensor_setting_[count] >> 16) & 0xFFFF;
-        if(tmp_angle & 0x8000)
-        {
-            imu_desire_[0] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
-        }
-        else
-        {
-            imu_desire_[0] = (double)((tmp_angle & 0x7FFF) / 100.0);
-        }
+        // tmp_angle = (sensor_setting_[count] >> 16) & 0xFFFF;
+        // if(tmp_angle & 0x8000)
+        // {
+        //     imu_desire_[0] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+        // }
+        // else
+        // {
+        //     imu_desire_[0] = (double)((tmp_angle & 0x7FFF) / 100.0);
+        // }
 
-        tmp_angle = sensor_setting_[count++] & 0xFFFF;
-        if(tmp_angle & 0x8000)
-        {
-            imu_desire_[1] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
-        }
-        else
-        {
-            imu_desire_[1] = (double)((tmp_angle & 0x7FFF) / 100.0);
-        }
+        // tmp_angle = sensor_setting_[count++] & 0xFFFF;
+        // if(tmp_angle & 0x8000)
+        // {
+        //     imu_desire_[1] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+        // }
+        // else
+        // {
+        //     imu_desire_[1] = (double)((tmp_angle & 0x7FFF) / 100.0);
+        // }
 
-        tmp_angle = (sensor_setting_[count] >> 16) & 0xFFFF;
-        if(tmp_angle & 0x8000)
-        {
-            imu_desire_[2] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
-        }
-        else
-        {
-            imu_desire_[2] = (double)((tmp_angle & 0x7FFF) / 100.0);
-        }
+        // tmp_angle = (sensor_setting_[count] >> 16) & 0xFFFF;
+        // if(tmp_angle & 0x8000)
+        // {
+        //     imu_desire_[2] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+        // }
+        // else
+        // {
+        //     imu_desire_[2] = (double)((tmp_angle & 0x7FFF) / 100.0);
+        // }
         
-        sensor_request_ = (sensor_setting_[count] >> 8) & 0x01;
-        imu_offset_reset_ = (sensor_setting_[count] >> 8) & 0x02;
-        force_state_ = (sensor_setting_[count] >> 8) & 0x04;
+        // sensor_request_ = (sensor_setting_[count] >> 8) & 0x01;
+        // imu_offset_reset_ = (sensor_setting_[count] >> 8) & 0x02;
+        // force_state_ = (sensor_setting_[count] >> 8) & 0x04;
       
         
+        // get_sensor_setting_flag_ = true;
+        // if(imu_offset_reset_)
+        // {
+        //     for(count=0; count<3; count++)
+        //         rpy_offset_[count] = rpy_raw_[count];
+        //     imu_offset_reset_ = false;
+        // }
+
+        short int tmp_parameter = 0;
+        double sensor_desire_set_[3];
+        sensor_request_ = (sensor_setting_[1] >> 8) & 0x01;
+        imu_offset_reset_ = (sensor_setting_[1] >> 8) & 0x02;
+        force_state_ = (sensor_setting_[1] >> 8) & 0x04;
+        gain_set_ = (sensor_setting_[1] >> 8) & 0x08;
+        roll_PID_set_ = (sensor_setting_[1] >> 8) & 0x10;
+        pitch_PID_set_ = (sensor_setting_[1] >> 8) & 0x20;
+        com_PID_set_ = (sensor_setting_[1] >> 8) & 0x40;
+        foot_offset_set_ = (sensor_setting_[1] >> 8) & 0x80;
+        // printf("seneor = %d\n", sensor_setting_[1]);
+        // printf("%d, %d, %d, %d, %d, %d, %d, %d\n", sensor_request_, imu_offset_reset_, force_state_, gain_set_, roll_PID_set_, pitch_PID_set_, com_PID_set_,foot_offset_set_);
+
+        tmp_parameter = (sensor_setting_[count] >> 16) & 0xFFFF;
+        if(tmp_parameter & 0x8000)
+            sensor_desire_set_[0] = (double)(( ~(tmp_parameter & 0x7FFF) + 1 ) / 1000.0);
+        else
+            sensor_desire_set_[0] = (double)((tmp_parameter & 0x7FFF) / 1000.0);
+
+        tmp_parameter = sensor_setting_[count++] & 0xFFFF;
+        if(tmp_parameter & 0x8000)
+            sensor_desire_set_[1] = (double)(( ~(tmp_parameter & 0x7FFF) + 1 ) / 1000.0);
+        else
+            sensor_desire_set_[1] = (double)((tmp_parameter & 0x7FFF) / 1000.0);
+
+        tmp_parameter = (sensor_setting_[count] >> 16) & 0xFFFF;
+        if(tmp_parameter & 0x8000)
+            sensor_desire_set_[2] = (double)(( ~(tmp_parameter & 0x7FFF) + 1 ) / 1000.0);
+        else
+            sensor_desire_set_[2] = (double)((tmp_parameter & 0x7FFF) / 1000.0);
+        
+        if(gain_set_)
+            memcpy(imu_desire_, sensor_desire_set_, sizeof(sensor_desire_set_));
+        else if(roll_PID_set_)
+            memcpy(roll_pid_, sensor_desire_set_, sizeof(sensor_desire_set_));
+        else if(pitch_PID_set_)
+            memcpy(pitch_pid_, sensor_desire_set_, sizeof(sensor_desire_set_));
+        else if(com_PID_set_)
+            memcpy(com_pid_, sensor_desire_set_, sizeof(sensor_desire_set_));
+        else if(foot_offset_set_)
+            memcpy(foot_offset_, sensor_desire_set_, sizeof(sensor_desire_set_));
+        // cout<<"imu_desire_ = "<<imu_desire_[0]<<", "<<imu_desire_[1]<<", "<<imu_desire_[2]<<endl;
+        // cout<<"roll_pid_ = "<<roll_pid_[0]<<", "<<roll_pid_[1]<<", "<<roll_pid_[2]<<endl;
+        // cout<<"pitch_pid_ = "<<pitch_pid_[0]<<", "<<pitch_pid_[1]<<", "<<pitch_pid_[2]<<endl;
+        // cout<<"com_pid_ = "<<com_pid_[0]<<", "<<com_pid_[1]<<", "<<com_pid_[2]<<endl;
+        // cout<<"foot_offset_ = "<<foot_offset_[0]<<", "<<foot_offset_[1]<<", "<<foot_offset_[2]<<endl;
         get_sensor_setting_flag_ = true;
         if(imu_offset_reset_)
         {
@@ -233,7 +288,7 @@ void SensorDataProcess::load_imu()
         }
         else if(state == 1)
         {
-            if(count <= 1)
+            if(count <= 5)
             {
                 imu_[count] = *(uint32_t *)init.p2h_imu_addr;
                 count++;
@@ -258,39 +313,104 @@ void SensorDataProcess::update_imu()
     {
         int count = 0;
         short int tmp_angle = 0;
+        short int tmp_accel = 0;
+        short int tmp_gyro = 0;
 
         if(imu_[0] == imu_[1])
             return;
-
+        //Roll
         tmp_angle = (imu_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[0] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+            rpy_raw_[0] = (double)((tmp_angle & 0x7FFF) * (-1) / 100.0);
         }
         else
         {
-            rpy_raw_[0] = (double)((tmp_angle & 0x7FFF) / 100.0);
+            rpy_raw_[0] = (double)((tmp_angle & 0xFFFF) / 100.0);
         }
-
+        //Pitch
         tmp_angle = imu_[count++] & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[1] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+            rpy_raw_[1] = (double)((tmp_angle & 0x7FFF) * (-1) / 100.0);
         }
         else
         {
-            rpy_raw_[1] = (double)((tmp_angle & 0x7FFF) / 100.0);
+            rpy_raw_[1] = (double)((tmp_angle & 0xFFFF) / 100.0);
         }
-
+        //Yaw
         tmp_angle = (imu_[count] >> 16) & 0xFFFF;
         if(tmp_angle & 0x8000)
         {
-            rpy_raw_[2] = (double)(( ~(tmp_angle & 0x7FFF) + 1 ) / 100.0);
+            rpy_raw_[2] = (double)((tmp_angle & 0x7FFF) * (-1) / 100.0);
         }
         else
         {
-            rpy_raw_[2] = (double)((tmp_angle & 0x7FFF) / 100.0);
+            rpy_raw_[2] = (double)((tmp_angle & 0xFFFF) / 100.0);
         }
+        count++;//jump reserve
+        //gyro _ x
+        tmp_gyro = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_gyro & 0x8000)
+        {
+            gyro_raw_[0] = (int)((tmp_gyro & 0x7FFF) * (-1));
+        }
+        else
+        {
+            gyro_raw_[0] = (int)((tmp_gyro & 0xFFFF));
+        }        
+        //gyro _ y
+        tmp_gyro = imu_[count++] & 0xFFFF;
+        if(tmp_gyro & 0x8000)
+        {
+            gyro_raw_[1] = (int)((tmp_gyro & 0x7FFF) * (-1));
+        }
+        else
+        {
+            gyro_raw_[1] = (int)((tmp_gyro & 0xFFFF));
+        }      
+        //gyro _ z
+        tmp_gyro = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_gyro & 0x8000)
+        {
+            gyro_raw_[2] = (int)((tmp_gyro & 0x7FFF) * (-1));
+        }
+        else
+        {
+            gyro_raw_[2] = (int)((tmp_gyro & 0xFFFF));
+        }     
+        count++;//jump reserve
+
+        //accel _ x
+        tmp_accel = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_accel & 0x8000)
+        {
+            accel_raw_[0] = (float)((tmp_accel & 0x7FFF) * (-1) / 100.0);
+        }
+        else
+        {
+            accel_raw_[0] = (float)((tmp_accel & 0xFFFF) / 100.0);
+        }        
+        //accel _ y
+        tmp_accel = imu_[count++] & 0xFFFF;
+        if(tmp_accel & 0x8000)
+        {
+            accel_raw_[1] = (float)((tmp_accel & 0x7FFF) * (-1) / 100.0);
+        }
+        else
+        {
+            accel_raw_[1] = (float)((tmp_accel & 0xFFFF) / 100.0);
+        }      
+        //accel _ z
+        tmp_accel = (imu_[count] >> 16) & 0xFFFF;
+        if(tmp_accel & 0x8000)
+        {
+            accel_raw_[2] = (float)((tmp_accel & 0x7FFF) * (-1) / 100.0);
+        }
+        else
+        {
+            accel_raw_[2] = (float)((tmp_accel & 0xFFFF) / 100.0);
+        }    
 
         for(count=0; count<3; count++)
         {
@@ -299,6 +419,15 @@ void SensorDataProcess::update_imu()
                 rpy_[count] += 360;
             else if(rpy_[count] > 180)
                 rpy_[count] -= 360;
+        }
+
+        for(count = 0; count <3 ;count++)
+        {
+            gyro_[count] = gyro_raw_[count];
+        }
+        for(count = 0; count < 3 ; count++)
+        {
+            accel_[count] = accel_raw_[count];
         }
     }
 }

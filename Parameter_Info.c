@@ -17,7 +17,7 @@ Parameters::Parameters()
     this->Ts = 150;
     this->Vmax = 0.1;
     this->Vmin = 0.09;
-    this->COM_Height = 24.3;//24.3;//26.2;//17.9;
+    this->COM_Height = 24.3;//26.9;//26.2;//17.9;
     this->abswaistx = 0;
 
     this->X_Swing_COM = 0;
@@ -78,6 +78,9 @@ ParameterInfo::ParameterInfo()
     this->WalkFlag = false;
     this->IsParametersLoad = false;
     this->FpgaFlag = false;
+    this->LCFinishFlag = false;
+    this->LCBalanceFlag = false;
+    this->LCBalanceOn = false;
 
     this->serialack = 0;
     this->cpgack = false;

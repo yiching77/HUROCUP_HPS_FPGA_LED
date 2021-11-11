@@ -95,15 +95,23 @@ public:
     void *h2p_avalon_locus_addr_1;
     void *h2p_avalon_sensor_data_addr;
     void *h2p_avalon_sensor_data_addr_1;
-
-    //press test
     void *p2h_set_hps_read_press_sensor_right_addr;
     void *p2h_set_hps_read_press_sensor_left_addr;
     void *p2h_press_sensor_right_addr;
     void *p2h_press_sensor_left_addr;
     void *h2p_read_press_sensor_right_pulse_addr;
     void *h2p_read_press_sensor_left_pulse_addr;
-    //press test end
+    
+    //hand data test
+    void *p2h_set_hps_read_hand_data_addr;
+    void *p2h_hand_data_addr;
+    void *h2p_read_hand_data_pulse_addr;
+    
+    //Motor feedback data test
+    void *p2h_set_hps_read_motor_data_leftfoot_addr;
+    void *p2h_motor_data_leftfoot_addr;
+    void *h2p_read_motor_data_leftfoot_pulse_addr;
+
 
     void *axi_virtual_base;
     void *robot_motion_addr;
