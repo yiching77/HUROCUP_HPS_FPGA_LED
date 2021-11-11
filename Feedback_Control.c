@@ -9,7 +9,7 @@ extern SensorDataProcess sensor;
 extern Walkinggait walkinggait;
 
 BalanceControl::BalanceControl()
-{
+{ 
 	
 	original_ik_point_rz_ = 0.0;
 	original_ik_point_lz_ = 0.0;
@@ -78,21 +78,21 @@ void BalanceControl::initialize(const int control_cycle_msec)
 	//hip
     // PIDleftfoot_hip_roll.setValueLimit(10, -10);
     // PIDleftfoot_hip_pitch.setValueLimit(10, -10);
-	PIDleftfoot_hip_roll.setValueLimit(300, -300);
-	PIDleftfoot_hip_pitch.setValueLimit(300, -300);
-    PIDleftfoot_hip_roll.setKpid(0,0,0);
-    PIDleftfoot_hip_pitch.setKpid(0.02, 0, 0.005);
-    PIDleftfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
-    PIDleftfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
+	// PIDleftfoot_hip_roll.setValueLimit(300, -300);
+	// PIDleftfoot_hip_pitch.setValueLimit(300, -300);
+    // PIDleftfoot_hip_roll.setKpid(0,0,0);
+    // PIDleftfoot_hip_pitch.setKpid(0.02, 0, 0.005);
+    // PIDleftfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
+    // PIDleftfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
 
 	// PIDrightfoot_hip_roll.setValueLimit(10, -10);
     // PIDrightfoot_hip_pitch.setValueLimit(10, -10);
-	PIDrightfoot_hip_roll.setValueLimit(300, -300);
-	PIDrightfoot_hip_pitch.setValueLimit(300, -300);
-    PIDrightfoot_hip_roll.setKpid(0,0,0);
-    PIDrightfoot_hip_pitch.setKpid(0.02, 0, 0.005);
-    PIDrightfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
-    PIDrightfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
+	// PIDrightfoot_hip_roll.setValueLimit(300, -300);
+	// PIDrightfoot_hip_pitch.setValueLimit(300, -300);
+    // PIDrightfoot_hip_roll.setKpid(0,0,0);
+    // PIDrightfoot_hip_pitch.setKpid(0.02, 0, 0.005);
+    // PIDrightfoot_hip_roll.setControlGoal(init_imu_value[(int)imu::roll].pos);
+    // PIDrightfoot_hip_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
 
 	//ankle
     PIDleftfoot_ankle_roll.setValueLimit(7, -7);
@@ -117,23 +117,23 @@ void BalanceControl::initialize(const int control_cycle_msec)
     PIDrightfoot_stand_pitch.setKpid(0.001, 0, 0);//(0.03, 0, 0.02);  //0.03, 0, 0.02
     PIDrightfoot_stand_pitch.setControlGoal(init_imu_value[(int)imu::pitch].pos);
 
-	PIDleftfoot_zmp_x.setValueLimit(7, -7);
-	PIDleftfoot_zmp_y.setValueLimit(7, -7);
-	PIDleftfoot_zmp_x.setKpid(0.0125, 0, 0);
-	PIDleftfoot_zmp_y.setKpid(0.0125, 0, 0);
-	PIDleftfoot_zmp_x.setControlGoal(0);
-	PIDleftfoot_zmp_y.setControlGoal(4.5);
+	// PIDleftfoot_zmp_x.setValueLimit(7, -7);
+	// PIDleftfoot_zmp_y.setValueLimit(7, -7);
+	// PIDleftfoot_zmp_x.setKpid(0.0125, 0, 0);
+	// PIDleftfoot_zmp_y.setKpid(0.0125, 0, 0);
+	// PIDleftfoot_zmp_x.setControlGoal(0);
+	// PIDleftfoot_zmp_y.setControlGoal(4.5);
 
-	PIDrightfoot_zmp_x.setValueLimit(7, -7);
-	PIDrightfoot_zmp_y.setValueLimit(7, -7);
-	PIDrightfoot_zmp_x.setKpid(0.0125, 0, 0);
-	PIDrightfoot_zmp_y.setKpid(0.0125, 0, 0);
-	PIDrightfoot_zmp_x.setControlGoal(0);
-	PIDrightfoot_zmp_y.setControlGoal(-4.5);
+	// PIDrightfoot_zmp_x.setValueLimit(7, -7);
+	// PIDrightfoot_zmp_y.setValueLimit(7, -7);
+	// PIDrightfoot_zmp_x.setKpid(0.0125, 0, 0);
+	// PIDrightfoot_zmp_y.setKpid(0.0125, 0, 0);
+	// PIDrightfoot_zmp_x.setControlGoal(0);
+	// PIDrightfoot_zmp_y.setControlGoal(-4.5);
 	
-	PIDCoM_x.setValueLimit(10, -10);
-	PIDCoM_x.setKpid(0.15, 0, 0);
-	PIDCoM_x.setControlGoal(0);
+	// PIDCoM_x.setValueLimit(10, -10);
+	// PIDCoM_x.setKpid(0.15, 0, 0);
+	// PIDCoM_x.setControlGoal(0);
 
 	imu_desire_[0] = 0;
 	imu_desire_[1] = 0;
@@ -141,14 +141,14 @@ void BalanceControl::initialize(const int control_cycle_msec)
 	roll_pid_[0] = 0;
 	roll_pid_[1] = 0;
 	roll_pid_[2] = 0;
-	pitch_pid_[0] = 0.02;
+	pitch_pid_[0] = 0.03;
 	pitch_pid_[1] = 0;
-	pitch_pid_[2] = 0.005;
-	com_pid_[0] = 0.03;
+	pitch_pid_[2] = 0.05;
+	com_pid_[0] = 0.02;
 	com_pid_[1] = 0;
-	com_pid_[2] = 0.02;
-	foot_offset_[0] = 1.8;
-	foot_offset_[1] = 0.5;
+	com_pid_[2] = 0.05;
+	foot_offset_[0] = 0.5;
+	foot_offset_[1] = 1.8;
 
     initialize_parameter();
 
@@ -762,8 +762,8 @@ void BalanceControl::InitEndPointControl()
 	PIDCoM_x.initParam();
 	parameterinfo->points.IK_Point_LX = 0;
 	parameterinfo->points.IK_Point_RX = 0;
-	parameterinfo->points.IK_Point_LZ = 24.3;
-	parameterinfo->points.IK_Point_RZ = 24.3;
+	parameterinfo->points.IK_Point_LZ = COM_HEIGHT;
+	parameterinfo->points.IK_Point_RZ = COM_HEIGHT;
 	leftfoot_hip_pitch = 0;
 	rightfoot_hip_pitch = 0;
 }
