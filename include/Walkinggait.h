@@ -60,6 +60,7 @@ public:
     double wFootPositionRepeat(const double start, const double length, const double t, const double T, const double T_DSP);
     double wFootPositionZ(const double height, const double t, const double T, const double T_DSP);
     double wFootTheta(const double theta, bool reverse, const double t, const double T, const double T_DSP);
+    double wFootPositionZUP(const double height, const double t, const double T, const double T_DSP, const int step);
 
     double unit_step(double x);
     double sinh(double x);
@@ -94,6 +95,7 @@ public:
     double Control_Step_length_X_,Control_Step_length_Y_;
     bool Stepout_flag_X_,Stepout_flag_Y_;
     int Step_Count_;
+    bool footstep_;
 
     // double test_v0_save;
 
@@ -109,6 +111,7 @@ public:
     Walkinggait();
     ~Walkinggait();
 
+    void send_footstep_to_ipc();
     void load_parameter();
     void update_parameter();
     void load_walkdata();

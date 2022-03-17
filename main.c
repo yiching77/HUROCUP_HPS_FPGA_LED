@@ -41,6 +41,7 @@ int main()
 
 		// test.Kinetic_Main(inxyz[0], inxyz[1], inxyz[2]);
 
+ 		// printf(" ");
 		// sleep(1);
 		sensor.load_sensor_setting();
 		sensor.sensor_package_generate();
@@ -48,6 +49,7 @@ int main()
 		walkinggait.load_walkdata();
 		walkinggait.calculate_point_trajectory();
 
+ 		// printf(" ");
 		gettimeofday(&walkinggait.timer_end_, NULL);
 		walkinggait.timer_dt_ = (double)(1000000.0 * (walkinggait.timer_end_.tv_sec - walkinggait.timer_start_.tv_sec) + (walkinggait.timer_end_.tv_usec - walkinggait.timer_start_.tv_usec));
 
@@ -85,7 +87,8 @@ int main()
 			IK.calculate_inverse_kinematic(walkinggait.motion_delay_);
 			locus.do_motion();
 			walkinggait.LIPM_flag_ = false;
-
+			// printf("walkinggait.footstep_ = %d\n", walkinggait.footstep_);
+			walkinggait.send_footstep_to_ipc();
 			walkinggait.locus_flag_ = false;
 		}
 		if(parameterinfo->LCFinishFlag  && parameterinfo->LCBalanceOn)

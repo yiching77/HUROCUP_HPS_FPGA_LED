@@ -71,6 +71,9 @@ void Initial::initial_memory_mapping()
     p2h_motor_data_leftfoot_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + MOTOR_DATA_LF_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
     h2p_read_motor_data_leftfoot_pulse_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + READ_MOTOR_DATA_LF_PULSE_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
 
+	//Footstep
+	h2p_send_footstep_data_pulse_addr = virtual_base + ( ( unsigned long  )( ALT_LWFPGASLVS_OFST + SEND_FOOTSTEP_DATA_PULSE_BASE ) & ( unsigned long)( HW_REGS_MASK ) );
+
 
 	axi_virtual_base = mmap( NULL, HW_FPGA_AXI_SPAN, ( PROT_READ | PROT_WRITE ), MAP_SHARED, fd, ALT_AXI_FPGASLVS_OFST );
 	if( virtual_base == MAP_FAILED ) {

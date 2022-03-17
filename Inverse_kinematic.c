@@ -45,10 +45,12 @@ void Locus::set_point_by_body()
 {
 	Points.Inverse_PointR_X = 0 - Points.Inverse_Pointbody_X;
 	Points.Inverse_PointR_Y = 0 - Points.Inverse_Pointbody_Y;
+	// Points.Inverse_PointR_Y = 0.5 - Points.Inverse_Pointbody_Y;
 	Points.Inverse_PointR_Z = COM_HEIGHT - Points.Inverse_Pointbody_Z;
 	Points.Inverse_PiontR_Thta = Points.Inverse_Piontbody_Thta;
 	Points.Inverse_PointL_X = 0 - Points.Inverse_Pointbody_X;
-	Points.Inverse_PointL_Y = 0 - Points.Inverse_Pointbody_Y;
+	Points.Inverse_PointL_Y = 0 -  Points.Inverse_Pointbody_Y;
+	// Points.Inverse_PointL_Y = 0.5 - Points.Inverse_Pointbody_Y;
 	Points.Inverse_PointL_Z = COM_HEIGHT - Points.Inverse_Pointbody_Z;
 	Points.Inverse_PiontL_Thta = Points.Inverse_Piontbody_Thta;
 }
@@ -296,8 +298,8 @@ void InverseKinematic::initial_parameters(){
 	// Parameters.X_Swing_Range = 1;     //cm
 	// Parameters.Y_Swing_Range = 3;     //cm
 	Parameters.COM_Height = COM_HEIGHT;     //cm//////	21.7
-	Parameters.l1 = 10;//13;             //cm Upper	10th: 12.5 11st: 10.2
-	Parameters.l2 = 10;//13;             //cm Down	10th: 12.5 11st: 10.4
+	Parameters.l1 = 11;//13;             //cm Upper	10th: 12.5 11st: 10.2
+	Parameters.l2 = 11;//13;             //cm Down	10th: 12.5 11st: 10.4
 	//Parameters.R_X_Offset = 2.5;      //cm -5
 	Parameters.R_X_Offset = 0;      //cm -5/////////////////////////////////////
 	Parameters.R_Y_Offset = 0;        //cm -1.5
@@ -595,8 +597,8 @@ void InverseKinematic::calculate_inverse_kinematic(int Motion_Delay)
 
 	map_motor.find("motor_11")->second.push_back((double)output_angle_[10]);
 	map_motor.find("motor_12")->second.push_back((double)output_angle_[11]);
-	map_motor.find("motor_13")->second.push_back((double)output_angle_[12]);
-	map_motor.find("motor_14")->second.push_back((double)output_angle_[13]);
+	map_motor.find("motor_13")->second.push_back(Points.Inverse_PointL_Y);
+	map_motor.find("motor_14")->second.push_back(Points.Inverse_PointL_Z);
 	map_motor.find("motor_15")->second.push_back((double)output_angle_[14]);
 
 	map_motor.find("motor_17")->second.push_back((double)output_angle_[16]);

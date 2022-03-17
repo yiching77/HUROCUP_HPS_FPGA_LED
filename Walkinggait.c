@@ -57,6 +57,31 @@ void Walkinggait::walking_timer()
     gettimeofday(&timer_start_, NULL);
 }
 
+void Walkinggait::send_footstep_to_ipc()
+{
+	// for(;;)
+	// {
+	// 	if(state == 0)
+	// 	{
+	// 		state = 1;
+	// 	}
+	// 	else if(state == 1)
+	// 	{
+        // printf("QQ ");
+        if(footstep_)
+        {
+			*(uint32_t *)init.h2p_send_footstep_data_pulse_addr = 1;
+            // usleep(1000 * 1000);
+			*(uint32_t *)init.h2p_send_footstep_data_pulse_addr = 0;
+            footstep_ = false;
+            // printf("now_step_ = %d\n", now_step_);
+        }
+			// state = 0;
+	// 		break;
+	// 	}
+	// }
+}
+
 void Walkinggait::load_parameter()
 {
     int state = 0;
@@ -348,6 +373,7 @@ WalkingGaitByLIPM::WalkingGaitByLIPM()
     Stepout_flag_Y_ = false;
     Control_Step_length_X_ = 0;
     Control_Step_length_Y_ = 0;
+    footstep_ = false;
 }
 WalkingGaitByLIPM::~WalkingGaitByLIPM()
 {    }
@@ -505,6 +531,7 @@ void WalkingGaitByLIPM::resetParameter()
     Stepout_flag_Y_ = false;
     Control_Step_length_X_ = 0;
     Control_Step_length_Y_ = 0;
+    footstep_ = false;
 }  
  
 void WalkingGaitByLIPM::process()
@@ -565,7 +592,7 @@ void WalkingGaitByLIPM::process()
         is_parameter_load_ = false;
         
         // if(( Stepout_flag_X_ || Stepout_flag_Y_ ) && Step_Count_ < 2)
-
+        footstep_ = true;
         readWalkData();
 
     }
@@ -770,7 +797,7 @@ void WalkingGaitByLIPM::process()
             rpx_ = wFootPositionRepeat(now_right_length_, (last_step_length_+step_length_)/2, t_, TT_, T_DSP_);
             lpy_ = now_left_shift_;
             rpy_ = wFootPositionRepeat(now_right_shift_, (last_shift_length_+shift_length_)/2, t_, TT_, T_DSP_);
-            lpz_ = 0;
+            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, now_step_);;
             rpz_ = wFootPositionZ(lift_height_, t_, TT_, T_DSP_);
             if(theta_*last_theta_ >= 0)
             {
@@ -805,7 +832,8 @@ void WalkingGaitByLIPM::process()
             rpx_ = now_length_;
             lpy_ = wFootPositionRepeat(now_left_shift_, (last_shift_length_+shift_length_)/2, t_, TT_, T_DSP_);
             rpy_ = now_right_shift_;
-            lpz_ = wFootPositionZ(lift_height_, t_, TT_, T_DSP_);
+            // lpz_ = wFootPositionZ(lift_height_, t_, TT_, T_DSP_);
+            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, now_step_);
             rpz_ = 0;
             if(theta_*last_theta_ >= 0)
             {
@@ -941,6 +969,49 @@ double WalkingGaitByLIPM::wFootPositionZ(const double height, const double t, co
         return 0.5*height*(1-cos(omega*new_t));
     else
         return 0;
+}
+double WalkingGaitByLIPM::wFootPositionZUP(const double height, const double t, const double T, const double T_DSP, const int step)
+{
+    double new_T = T*(1-T_DSP);
+    double new_t = t-T*T_DSP/2;
+    double omega = 2*PI/new_T;
+
+    if((step % 2) == 0)
+    {
+        if(t <= T*T_DSP/2 && step == 6)
+        {
+            return 2;
+        }
+        else if(t > T*T_DSP/2 && t < T*(1-(T_DSP/2)))
+        {
+            if(step == 6)
+                return 0.5*height*(1-cos(0.63*omega*new_t+0.2+PI/2));
+            else if(step == 4)
+                return 0.5*height*(1-cos(0.63*omega*new_t+0.2));
+            else
+                return 0.5*height*(1-cos(omega*new_t));
+        }
+        else if(t >= T*(1-(T_DSP/2)) && step == 4)
+        {
+            return 2;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if(step == 5)
+    {
+        return 2;
+    }
+    else
+    {
+        return 0;
+    }
+    // if(t > T*T_DSP/2 && t < T*(1-(T_DSP/2)))
+    //     return 0.5*height*(1-cos(omega*new_t));
+    // else
+    //     return 2;
 }
 double WalkingGaitByLIPM::wFootTheta(const double theta, bool reverse, const double t, const double T, const double T_DSP)
 {
