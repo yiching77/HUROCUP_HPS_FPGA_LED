@@ -374,6 +374,9 @@ WalkingGaitByLIPM::WalkingGaitByLIPM()
     Control_Step_length_X_ = 0;
     Control_Step_length_Y_ = 0;
     footstep_ = false;
+    boardstep_ = false;
+    Step_Board_Count_ = 0;
+    board_height_ = 2;
 }
 WalkingGaitByLIPM::~WalkingGaitByLIPM()
 {    }
@@ -532,6 +535,9 @@ void WalkingGaitByLIPM::resetParameter()
     Control_Step_length_X_ = 0;
     Control_Step_length_Y_ = 0;
     footstep_ = false;
+    boardstep_ = false;
+    Step_Board_Count_ = 0;
+    board_height_ = 2;
 }  
  
 void WalkingGaitByLIPM::process()
@@ -593,6 +599,22 @@ void WalkingGaitByLIPM::process()
         
         // if(( Stepout_flag_X_ || Stepout_flag_Y_ ) && Step_Count_ < 2)
         footstep_ = true;
+        if(now_step_ == 4)
+        {
+            boardstep_ = true;
+        }
+        if(boardstep_)
+        {
+            if(Step_Board_Count_ > 3)
+            {
+                boardstep_ = false;
+                Step_Board_Count_ = 0;
+            }
+            else
+            {
+                Step_Board_Count_++;
+            }
+        }
         readWalkData();
 
     }
@@ -797,7 +819,7 @@ void WalkingGaitByLIPM::process()
             rpx_ = wFootPositionRepeat(now_right_length_, (last_step_length_+step_length_)/2, t_, TT_, T_DSP_);
             lpy_ = now_left_shift_;
             rpy_ = wFootPositionRepeat(now_right_shift_, (last_shift_length_+shift_length_)/2, t_, TT_, T_DSP_);
-            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, now_step_);;
+            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, now_step_, Step_Board_Count_, board_height_);;
             rpz_ = wFootPositionZ(lift_height_, t_, TT_, T_DSP_);
             if(theta_*last_theta_ >= 0)
             {
@@ -833,7 +855,7 @@ void WalkingGaitByLIPM::process()
             lpy_ = wFootPositionRepeat(now_left_shift_, (last_shift_length_+shift_length_)/2, t_, TT_, T_DSP_);
             rpy_ = now_right_shift_;
             // lpz_ = wFootPositionZ(lift_height_, t_, TT_, T_DSP_);
-            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, now_step_);
+            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, now_step_, Step_Board_Count_, board_height_);
             rpz_ = 0;
             if(theta_*last_theta_ >= 0)
             {
@@ -970,7 +992,7 @@ double WalkingGaitByLIPM::wFootPositionZ(const double height, const double t, co
     else
         return 0;
 }
-double WalkingGaitByLIPM::wFootPositionZUP(const double height, const double t, const double T, const double T_DSP, const int step)
+double WalkingGaitByLIPM::wFootPositionZUP(const double height, const double t, const double T, const double T_DSP, const int step, const int board_step, const double board_height)
 {
     double new_T = T*(1-T_DSP);
     double new_t = t-T*T_DSP/2;
@@ -978,31 +1000,39 @@ double WalkingGaitByLIPM::wFootPositionZUP(const double height, const double t, 
 
     if((step % 2) == 0)
     {
-        if(t <= T*T_DSP/2 && step == 6)
+        if(t <= T*T_DSP/2 && board_step == 3)
         {
-            return 2;
+            return board_height;
         }
-        else if(t > T*T_DSP/2 && t < T*(1-(T_DSP/2)))
+        else if(t > T*T_DSP/2 && t <= T/2)
         {
-            if(step == 6)
-                return 0.5*height*(1-cos(0.63*omega*new_t+0.2+PI/2));
-            else if(step == 4)
-                return 0.5*height*(1-cos(0.63*omega*new_t+0.2));
+            if(board_step == 3)
+                return 0.5*(height-board_height)*(1-cos(omega*new_t))+board_height;
+            // else if(step == 4)
+            //     return 0.5*height*(1-cos(0.63*omega*new_t+0.2));
+            else
+                return 0.5*height*(1-cos(omega*new_t));
+        }else if(t > T/2 && t <= T*(1-(T_DSP/2)))
+        {
+            if(board_step == 1)
+                return 0.5*(height-board_height)*(1-cos(omega*new_t))+board_height;
+            // else if(step == 4)
+            //     return 0.5*height*(1-cos(0.63*omega*new_t+0.2));
             else
                 return 0.5*height*(1-cos(omega*new_t));
         }
-        else if(t >= T*(1-(T_DSP/2)) && step == 4)
+        else if(t > T*(1-(T_DSP/2)) && board_step == 1)
         {
-            return 2;
+            return board_height;
         }
         else
         {
             return 0;
         }
     }
-    else if(step == 5)
+    else if(board_step == 2)
     {
-        return 2;
+        return board_height;
     }
     else
     {

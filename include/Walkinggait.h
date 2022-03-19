@@ -60,7 +60,7 @@ public:
     double wFootPositionRepeat(const double start, const double length, const double t, const double T, const double T_DSP);
     double wFootPositionZ(const double height, const double t, const double T, const double T_DSP);
     double wFootTheta(const double theta, bool reverse, const double t, const double T, const double T_DSP);
-    double wFootPositionZUP(const double height, const double t, const double T, const double T_DSP, const int step);
+    double wFootPositionZUP(const double height, const double t, const double T, const double T_DSP, const int step, const int board_step, const double board_height);
 
     double unit_step(double x);
     double sinh(double x);
@@ -96,6 +96,9 @@ public:
     bool Stepout_flag_X_,Stepout_flag_Y_;
     int Step_Count_;
     bool footstep_;
+    bool boardstep_;
+    double board_height_;
+    int Step_Board_Count_;
 
     // double test_v0_save;
 
