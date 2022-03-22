@@ -72,7 +72,7 @@ int main()
 		}
 
  		// printf(" ");
-		// usleep(100 * 1000); 
+		// usleep(50 * 1000); 
 		if((walkinggait.locus_flag_))
 		{
  
