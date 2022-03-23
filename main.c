@@ -27,6 +27,7 @@ int main()
 	while(1)
 	{
     	// printf(" ");
+		// printf("parameterinfo->complan.walking_stop = %d\n", parameterinfo->complan.walking_stop);
 		// printf("rpy[0]_ = %f, rpy[1]_ = %f, rpy[2]_ = %f\n", sensor.rpy_[0],sensor.rpy_[1],sensor.rpy_[2]);
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)
@@ -72,7 +73,7 @@ int main()
 		}
 
  		// printf(" ");
-		// usleep(50 * 1000); 
+		// usleep(100 * 1000); 
 		if((walkinggait.locus_flag_))
 		{
  

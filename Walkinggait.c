@@ -263,14 +263,10 @@ void Walkinggait::update_walkdata()
         walkdata_cnt = 2;
         parameterinfo->X = tmp_arr[arr_index++] / 1000.0;
         parameterinfo->Y = tmp_arr[arr_index++] / 1000.0;
-        parameterinfo->Z = tmp_arr[arr_index++] / 1000.0;
+        parameterinfo->Z = tmp_arr[arr_index++];
         parameterinfo->THTA = tmp_arr[arr_index] / 180.0 * PI;
         walking_cmd_ = (walkdata_[walkdata_cnt] >> 24) & 0xFF;
         sensor_mode_ = (walkdata_[walkdata_cnt] >> 16) & 0xFF;
-        // if(now_step_ > step_)
-        //     parameterinfo->complan.walking_stop = true;
-        // else
-            // parameterinfo->complan.walking_stop = false;
         get_walkdata_flag_ = true;
         get_walkdata_ = true;
     }
@@ -371,6 +367,7 @@ WalkingGaitByLIPM::WalkingGaitByLIPM()
     board_height_ = 2;
     get_walkdata_ = false;
     stop_step_flag_ = false;
+    step_height_ = 0;
 }
 WalkingGaitByLIPM::~WalkingGaitByLIPM()
 {    }
@@ -419,7 +416,7 @@ void WalkingGaitByLIPM::readWalkData()
     {
         step_length_ = parameterinfo->X;
         shift_length_ = parameterinfo->Y;
-        // board_height_ = parameterinfo->Z;
+        step_height_ = parameterinfo->Z;
         if((theta_ >= 0) && ((pre_step_ % 2) == 1))
         {
             theta_ = parameterinfo->THTA;
@@ -535,6 +532,7 @@ void WalkingGaitByLIPM::resetParameter()
     board_height_ = 2;
     get_walkdata_ = false;
     stop_step_flag_ = false;
+    step_height_ = 0;
 }  
  
 void WalkingGaitByLIPM::process()
@@ -595,25 +593,24 @@ void WalkingGaitByLIPM::process()
         
         // if(( Stepout_flag_X_ || Stepout_flag_Y_ ) && Step_Count_ < 2)
         footstep_ = true;
-        // get_walkdata_ = false;
-        if(now_step_ == 4)
+        readWalkData();
+
+        if(step_height_)
         {
             boardstep_ = true;
+            board_height_ = step_height_;
         }
         if(boardstep_)
         {
-            if(Step_Board_Count_ > 3)
+            if(Step_Board_Count_ > 2)
             {
                 boardstep_ = false;
                 Step_Board_Count_ = 0;
+                board_height_ = 0;
             }
             else
-            {
                 Step_Board_Count_++;
-            }
         }
-        readWalkData();
-
     }
     pre_step_ = now_step_;//步數儲存
 
@@ -928,10 +925,10 @@ void WalkingGaitByLIPM::process()
         map_walk.find("com_x")->second.push_back(px_);
         map_walk.find("com_y")->second.push_back(py_);
         map_walk.find("now_step_")->second.push_back(now_step_);
-        map_walk.find("ideal_zmp_x")->second.push_back(now_length_);
+        map_walk.find("ideal_zmp_x")->second.push_back(boardstep_);
         map_walk.find("ideal_zmp_y")->second.push_back(now_shift_+now_width_);
-        map_walk.find("roll")->second.push_back(sensor.rpy_[0]);
-        map_walk.find("pitch")->second.push_back(sensor.rpy_[1]);
+        map_walk.find("roll")->second.push_back(Step_Board_Count_);//sensor.rpy_[0]);
+        map_walk.find("pitch")->second.push_back(board_height_);//sensor.rpy_[1]);
         map_walk.find("yaw")->second.push_back(step_);//sensor.rpy_[2]);
         map_walk.find("points")->second.push_back(now_width_);
         map_walk.find("t_")->second.push_back(t_);
@@ -1011,7 +1008,8 @@ double WalkingGaitByLIPM::wFootPositionZUP(const double height, const double t, 
                 return 0.5*(height-board_height)*(1-cos(omega*new_t))+board_height;
             else
                 return 0.5*height*(1-cos(omega*new_t));
-        }else if(t > T/2 && t <= T*(1-(T_DSP/2)))
+        }
+        else if(t > T/2 && t <= T*(1-(T_DSP/2)))
         {
             if(board_step == 1)
                 return 0.5*(height-board_height)*(1-cos(omega*new_t))+board_height;

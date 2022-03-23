@@ -98,6 +98,7 @@ public:
     bool footstep_;
     bool boardstep_;
     double board_height_;
+    double step_height_;
     int Step_Board_Count_;
     bool get_walkdata_;
     bool stop_step_flag_;
