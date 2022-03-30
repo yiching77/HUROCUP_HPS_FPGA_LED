@@ -97,9 +97,15 @@ public:
     int Step_Count_;
     bool footstep_;
     bool boardstep_;
+    bool boardstep_left_;
+    bool boardstep_right_;
     double board_height_;
+    double board_height_left_;
+    double board_height_right_;
     double step_height_;
     int Step_Board_Count_;
+    int Step_Left_Board_Count_;
+    int Step_Right_Board_Count_;
     bool get_walkdata_;
     bool stop_step_flag_;
 

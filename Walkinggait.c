@@ -363,8 +363,14 @@ WalkingGaitByLIPM::WalkingGaitByLIPM()
     Control_Step_length_Y_ = 0;
     footstep_ = false;
     boardstep_ = false;
+    boardstep_left_ = false;
+    boardstep_right_ = false;
     Step_Board_Count_ = 0;
+    Step_Left_Board_Count_ = 0;
+    Step_Right_Board_Count_ = 0;
     board_height_ = 2;
+    board_height_left_ = 0;
+    board_height_right_ = 0;
     get_walkdata_ = false;
     stop_step_flag_ = false;
     step_height_ = 0;
@@ -528,8 +534,14 @@ void WalkingGaitByLIPM::resetParameter()
     Control_Step_length_Y_ = 0;
     footstep_ = false;
     boardstep_ = false;
+    boardstep_left_ = false;
+    boardstep_right_ = false;
     Step_Board_Count_ = 0;
+    Step_Left_Board_Count_ = 0;
+    Step_Right_Board_Count_ = 0;
     board_height_ = 2;
+    board_height_left_ = 0;
+    board_height_right_ = 0;
     get_walkdata_ = false;
     stop_step_flag_ = false;
     step_height_ = 0;
@@ -597,19 +609,39 @@ void WalkingGaitByLIPM::process()
 
         if(step_height_)
         {
-            boardstep_ = true;
-            board_height_ = step_height_;
-        }
-        if(boardstep_)
-        {
-            if(Step_Board_Count_ > 2)
+            if(now_step_ % 2 == 0)
             {
-                boardstep_ = false;
-                Step_Board_Count_ = 0;
-                board_height_ = 0;
+                // boardstep_ = true;
+                boardstep_left_ = true;
+                board_height_left_ = step_height_;
             }
             else
-                Step_Board_Count_++;
+            {
+                boardstep_right_ = true;
+                board_height_right_ = step_height_;
+            }
+        }
+        if(boardstep_left_)
+        {
+            if(Step_Left_Board_Count_ > 2)
+            {
+                boardstep_left_ = false;
+                Step_Left_Board_Count_ = 0;
+                board_height_left_ = 0;
+            }
+            else
+                Step_Left_Board_Count_++;
+        }
+        if(boardstep_right_)
+        {
+            if(Step_Right_Board_Count_ > 2)
+            {
+                boardstep_right_ = false;
+                Step_Right_Board_Count_ = 0;
+                board_height_right_ = 0;
+            }
+            else
+                Step_Right_Board_Count_++;
         }
     }
     pre_step_ = now_step_;//步數儲存
@@ -818,8 +850,8 @@ void WalkingGaitByLIPM::process()
             rpx_ = wFootPositionRepeat(now_right_length_, (last_step_length_+step_length_)/2, t_, TT_, T_DSP_);
             lpy_ = now_left_shift_;
             rpy_ = wFootPositionRepeat(now_right_shift_, (last_shift_length_+shift_length_)/2, t_, TT_, T_DSP_);
-            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 0, Step_Board_Count_, board_height_);;
-            rpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 1, Step_Board_Count_, board_height_);
+            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 0, Step_Left_Board_Count_, board_height_);;
+            rpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 1, Step_Right_Board_Count_, board_height_);
             if(theta_*last_theta_ >= 0)
             {
                 if(theta_<0)
@@ -853,8 +885,8 @@ void WalkingGaitByLIPM::process()
             rpx_ = now_length_;
             lpy_ = wFootPositionRepeat(now_left_shift_, (last_shift_length_+shift_length_)/2, t_, TT_, T_DSP_);
             rpy_ = now_right_shift_;
-            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 1, Step_Board_Count_, board_height_);
-            rpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 0, Step_Board_Count_, board_height_);;
+            lpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 1, Step_Left_Board_Count_, board_height_);
+            rpz_ = wFootPositionZUP(lift_height_, t_, TT_, T_DSP_, 0, Step_Right_Board_Count_, board_height_);;
             if(theta_*last_theta_ >= 0)
             {
                 if(theta_<0)
@@ -927,8 +959,8 @@ void WalkingGaitByLIPM::process()
         map_walk.find("now_step_")->second.push_back(now_step_);
         map_walk.find("ideal_zmp_x")->second.push_back(boardstep_);
         map_walk.find("ideal_zmp_y")->second.push_back(now_shift_+now_width_);
-        map_walk.find("roll")->second.push_back(Step_Board_Count_);//sensor.rpy_[0]);
-        map_walk.find("pitch")->second.push_back(board_height_);//sensor.rpy_[1]);
+        map_walk.find("roll")->second.push_back(sensor.rpy_[0]);
+        map_walk.find("pitch")->second.push_back(sensor.rpy_[1]);
         map_walk.find("yaw")->second.push_back(step_);//sensor.rpy_[2]);
         map_walk.find("points")->second.push_back(now_width_);
         map_walk.find("t_")->second.push_back(t_);
