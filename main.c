@@ -27,7 +27,6 @@ int main()
 	while(1)
 	{
     	// printf(" ");
-		// printf("parameterinfo->complan.walking_stop = %d\n", parameterinfo->complan.walking_stop);
 		// printf("rpy[0]_ = %f, rpy[1]_ = %f, rpy[2]_ = %f\n", sensor.rpy_[0],sensor.rpy_[1],sensor.rpy_[2]);
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)
@@ -71,9 +70,17 @@ int main()
 			gettimeofday(&walkinggait.timer_start_, NULL);
 			// balance.balance_control();
 		}
-
+		// printf("\nwalking_stop = %d\n", parameterinfo->complan.walking_stop);
+		// printf("samplepointtmp_ = %d, sample_point_ = %d\n", walkinggait.samplepointtmp_, walkinggait.sample_point_);
+		// printf("     next_step_ = %d,     now_step_ = %d, pre_step_ = %d\n\n", walkinggait.next_step_, walkinggait.now_step_, walkinggait.pre_step_);
+		// printf("    footstep_ = %d\n", walkinggait.footstep_);
+		// printf("get_walkdata_ = %d\n\n", walkinggait.get_walkdata_);
+		// printf("           X = %f,             y = %f,            z = %f\n", parameterinfo->X, parameterinfo->Y, parameterinfo->Z);
+		// printf("step_length_ = %f, shift_length_ = %f, step_height_ = %f\n\n", walkinggait.step_length_, walkinggait.shift_length_, walkinggait.step_height_);
+		// printf(" last_step_length_ = %f, last_length_ = %f, now_length_ = %f\n", walkinggait.last_step_length_, walkinggait.last_length_, walkinggait.now_length_);
+		// printf("last_shift_length_ = %f,  last_shift_ = %f,  now_shift_ = %f\n\n\n", walkinggait.last_shift_length_, walkinggait.last_shift_, walkinggait.now_shift_);
  		// printf(" ");
-		// usleep(100 * 1000); 
+		// usleep(500 * 1000); 
 		if((walkinggait.locus_flag_))
 		{
  
@@ -91,34 +98,6 @@ int main()
 			// printf("walkinggait.footstep_ = %d\n", walkinggait.footstep_);
 			walkinggait.send_footstep_to_ipc();
 			walkinggait.locus_flag_ = false;
-		}
-		if(parameterinfo->LCFinishFlag  && parameterinfo->LCBalanceOn)
-		{
-			i++;
-			if(i>290)
-			{
-				parameterinfo->LCFinishFlag = false;
-				parameterinfo->LCBalanceFlag = false;
-				balance.saveData();
-				IK.saveData();
-				i = 0;
-			}
-			else if(i>200)
-			{
-				parameterinfo->LCBalanceFlag = true;
-			}
-			if(i>90)
-			{
-				balance.setSupportFoot();
-				balance.balance_control();
-				locus.get_cpg_with_offset();
-				IK.calculate_inverse_kinematic(30);
-				locus.do_motion();
-			}
-		}
-		else
-		{
-			parameterinfo->LCFinishFlag = false;
 		}
 	}
 

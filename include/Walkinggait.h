@@ -21,7 +21,7 @@
 // #include <std_msgs/String.h>
 
 #define WALKING_INTERVAL 30000.0   //30 ms
-#define STARTSTEPCOUNTER 2
+#define STARTSTEPCOUNTER 1
 typedef enum
 {
     etStart = 0x01,
@@ -97,11 +97,19 @@ public:
     int Step_Count_;
     bool footstep_;
     bool boardstep_;
+    bool boardstep_left_;
+    bool boardstep_right_;
     double board_height_;
     double step_height_;
+    float board_height_left_;
+    float board_height_right_;
     int Step_Board_Count_;
+    int Step_Left_Board_Count_;
+    int Step_Right_Board_Count_;
     bool get_walkdata_;
     bool stop_step_flag_;
+    int samplepointtmp_;
+    int next_step_;
 
     // double test_v0_save;
 
