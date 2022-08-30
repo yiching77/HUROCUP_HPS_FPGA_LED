@@ -100,6 +100,8 @@ public:
     bool boardstep_left_;
     bool boardstep_right_;
     double board_height_;
+    double board_height_left_;
+    double board_height_right_;
     double step_height_;
     float board_height_left_;
     float board_height_right_;

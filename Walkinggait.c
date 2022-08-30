@@ -374,6 +374,8 @@ WalkingGaitByLIPM::WalkingGaitByLIPM()
     Step_Left_Board_Count_ = 0;
     Step_Right_Board_Count_ = 0;
     board_height_ = 2;
+    board_height_left_ = 0;
+    board_height_right_ = 0;
     get_walkdata_ = false;
     stop_step_flag_ = false;
     step_height_ = 0;
@@ -501,6 +503,8 @@ void WalkingGaitByLIPM::resetParameter()
     Step_Left_Board_Count_ = 0;
     Step_Right_Board_Count_ = 0;
     board_height_ = 2;
+    board_height_left_ = 0;
+    board_height_right_ = 0;
     get_walkdata_ = false;
     stop_step_flag_ = false;
     step_height_ = 0;
@@ -571,7 +575,6 @@ void WalkingGaitByLIPM::process()
         {
             if(now_step_ % 2 == 0)
             {
-                // boardstep_ = true; 
                 boardstep_left_ = true;
                 board_height_left_ = step_height_;
             }
@@ -938,8 +941,8 @@ void WalkingGaitByLIPM::process()
         map_walk.find("now_step_")->second.push_back(now_step_);
         map_walk.find("ideal_zmp_x")->second.push_back(boardstep_);
         map_walk.find("ideal_zmp_y")->second.push_back(now_shift_+now_width_);
-        map_walk.find("roll")->second.push_back(Step_Board_Count_);//sensor.rpy_[0]);
-        map_walk.find("pitch")->second.push_back(board_height_);//sensor.rpy_[1]);
+        map_walk.find("roll")->second.push_back(sensor.rpy_[0]);
+        map_walk.find("pitch")->second.push_back(sensor.rpy_[1]);
         map_walk.find("yaw")->second.push_back(step_);//sensor.rpy_[2]);
         map_walk.find("points")->second.push_back(now_width_);
         map_walk.find("t_")->second.push_back(t_);
