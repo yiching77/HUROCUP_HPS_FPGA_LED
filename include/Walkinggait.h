@@ -58,12 +58,18 @@ public:
     double wComPosition(double x0, double vx0, double px, double t, double T);
     double wFootPosition(const double start, const double length, const double t, const double T, const double T_DSP);
     double wFootPositionRepeat(const double start, const double length, const double t, const double T, const double T_DSP);
-    double wFootPositionZ(const double height, const double t, const double T, const double T_DSP);
+    // double wFootPositionZ(const double height, const double t, const double T, const double T_DSP);
+    double wFootPositionZ(const double height, const double t, const double T, const double T_DSP, const int board_step__);
     double wFootTheta(const double theta, bool reverse, const double t, const double T, const double T_DSP);
+    
+
 
     double unit_step(double x);
     double sinh(double x);
     double cosh(double x);
+
+    double board_height;
+    int board_step__;
 
     //for test
     string DtoS(double value);
@@ -72,6 +78,11 @@ public:
 // private:
     bool is_parameter_load_;
     bool ready_to_stop_;
+    
+    bool check_to_walk = false;
+
+
+
     int moving_state_;
     int period_t_;
     int time_point_, sample_point_, sample_time_;
@@ -101,6 +112,9 @@ public:
     
     int name_cont_;
 	std::map<std::string, std::vector<float>> map_walk;
+
+
+    
 };
 
 class Walkinggait : public WalkingGaitByLIPM
