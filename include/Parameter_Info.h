@@ -13,7 +13,7 @@ enum WalkingState
     FirstStep,
     Repeat,
     StopStep,
-    MarkTimeStep,
+    MarkTimeStep, 
     ForwardStep,
     BackwardStep,
     // OutStep
