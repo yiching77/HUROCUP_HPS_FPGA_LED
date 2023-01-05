@@ -13,7 +13,7 @@ ZMPProcess::ZMPProcess()
 	ZMP_kg_table = new int[5]{0,1,2,3,4};
 	initialize();
 }
-
+ 
 ZMPProcess::~ZMPProcess()
 {
 	for(int i = 0; i < 8; i++)delete[] ZMP_kg_offset[i];
