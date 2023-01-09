@@ -58,8 +58,9 @@ public:
     double wComPosition(double x0, double vx0, double px, double t, double T);
     double wFootPosition(const double start, const double length, const double t, const double T, const double T_DSP);
     double wFootPositionRepeat(const double start, const double length, const double t, const double T, const double T_DSP);
-    // double wFootPositionZ(const double height, const double t, const double T, const double T_DSP);
-    double wFootPositionZ(const double height, const double t, const double T, const double T_DSP, const int board_step__);
+    double wFootPositionZ(const double height, const double t, const double T, const double T_DSP);
+    // double wFootPositionZ_77(const double height, const double t, const double T, const double T_DSP, const int board_step__);
+    double wFootPositionZ_stairs(const double height, const double t, const double T, const double T_DSP, const int state);
     double wFootTheta(const double theta, bool reverse, const double t, const double T, const double T_DSP);
     
 
@@ -68,8 +69,15 @@ public:
     double sinh(double x);
     double cosh(double x);
 
+    //77五邊形
     double board_height;
     int board_step__;
+
+
+    //HAO_stairs
+    double staris_height;
+    int state;
+    int stairs_wave;
 
     //for test
     string DtoS(double value);
