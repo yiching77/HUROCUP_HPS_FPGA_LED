@@ -15,6 +15,8 @@ int main()
 	sensor.fall_Down_Flag_ = false;
 	sensor.stop_Walk_Flag_ = false;
 
+	// walkinggait.aa = parameterinfo->X;
+
 	balance.initialize(30);
 	usleep(1000 * 1000);
 	init.initial_system();
@@ -27,6 +29,10 @@ int main()
 	while(1)
 	{
     	// printf(" ");
+		// printf("aa = %d", walkinggait.aa);
+
+		// cout << parameterinfo->X << endl;
+
 		// printf("rpy[0]_ = %f, rpy[1]_ = %f, rpy[2]_ = %f\n", sensor.rpy_[0],sensor.rpy_[1],sensor.rpy_[2]);
 		datamodule.load_database();
 		if(datamodule.motion_execute_flag_)
@@ -42,6 +48,8 @@ int main()
 		// test.Kinetic_Main(inxyz[0], inxyz[1], inxyz[2]);
 
 		// sleep(1);
+		// printf(" ");
+		// usleep(100 * 100);
 		sensor.load_sensor_setting();
 		sensor.sensor_package_generate();
 		walkinggait.load_parameter();
@@ -70,7 +78,8 @@ int main()
 		}
 
  		// printf(" ");
-		// usleep(100 * 1000); 
+		// sleep(1);
+		// usleep(100 * 100); 
 		if((walkinggait.locus_flag_))
 		{
  
@@ -116,6 +125,10 @@ int main()
 		{
 			parameterinfo->LCFinishFlag = false;
 		}
+
+		// printf(" ");
+		// usleep(100);
+		// sleep(1);
 	}
 
 		if(walkinggait.plot_once_ == true)
